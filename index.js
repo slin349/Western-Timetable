@@ -5,6 +5,7 @@ const router = express.Router();
 const fs = require('fs'); //this is for node.js file system
 const jsonFile = require('./data/schedule.json');
 const userFile = require('./data/users.json');
+const bcrypt = require('bcrypt');
 
 // ./ means in the current same level, and ../ means one file backwards
 //this line imports the data from another file
@@ -417,10 +418,16 @@ app.get('/users', (req,res) => {
     res.json(users);
 })
 
-app.post('/users', (req, res) => {
-    const user = {name: req.body.name, password: req.body.password}
+app.post('/users', async (req, res) => {
+    const user = {email: req.body.email, name: req.body.username, password: req.body.password}
 
-    userFile [user.name] = [user]; //this includes the data to the file however does not save it
+    try {
+        const salt = await bcrypt.genSalt();
+        const hashPass = await bcrypt.hash(req.body.password, salt);
+        console.log(salt);
+        console.log(hashPass);
+
+        userFile [user.email]= [user.name, hashPass]; //this includes the data to the file however does not save it
         const data = JSON.stringify(userFile); //convert to JSON
 
         //writing to JSON file
@@ -429,8 +436,11 @@ app.post('/users', (req, res) => {
                 throw err;
             }
             console.log(`User added ${user.name}`);
-            res.status(201).send(users);
+            res.status(201);
         })
+    } catch {
+        res.status(500).send();
+    }
 })
 
 //Router for /timetable
