@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Western Timetable</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <script defer src="script.js"></script>
+        <div id="title">
+            <h1>Western Timetable</h1>
+        </div>
+        <h3><a href="schedule.html">Schedule</a></h3>
+        <div id="subject">
+            <label for="subjects">Subject:</label>
+            <select id="get-subjectlist">
+                <option value="" disabled selected>Select your subject</option>
+            </select>
+        </div>
+        <div id="coursecode">
+            <label for="courses">CourseCode:</label>
+            <select id="get-coursecode"></select>
+        </div>
+        <div id="classcomponent">
+            <label for="classcomponents">Components</label>
+            <select id="classcomponents">
+                <option value="ALL">ALL</option>
+                <option value="LEC">LEC</option>
+                <option value="LAB">LAB</option>
+                <option value="TUT">TUT</option>
+            </select>
+        </div>
+        <button id="search">Search</button>
+        <span id="status">
+
+        </span>
+        <div id="selectcourse">
+            <label for="schedulename" >Enter Schedule Name:</label>
+            <input type="text" id="schedulenamebox">
+            <label for="subjectname" >Enter Subject:</label>
+            <input type="text" id="subjectbox">
+            <label for="coursename" >Enter Course:</label>
+            <input type="text" id="coursebox">
+            <button id="submitcourse">Submit</button>
+            <span id="coursestatus">
+
+            </span>
+        </div>
+        <div id="courseinfo">
+            <ol id="courseinfolist"></ol>
+        </div>
+    </body>
+    
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Schedule</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <script defer src="schedule_script.js"></script>
+        <div id="title">
+            <h1>Schedules</h1>
+        </div>
+        <h3><a href="index.html">Go Back</a></h3>
+        <div id="createSched">
+            <label for="schedulename" >Enter Schedule Name:</label>
+            <input type="text" id="schedulenamebox">
+            <button id="schedulenamesubmit">Submit</button>
+            <button id="deleteall">Delete All Schedules</button>
+            <span id="schedulestatus">
+            
+            </span>
+        </div>
+        <div id="deleteschedule">
+            <label for="deletesched" >Delete Schedule Name:</label>
+            <input type="text" id="deletebox">
+            <button id="deletebutton">Delete</button>
+        </div>
+        <div id="schedulecontainer">
+            <ol id="schedules">
+
+            </ol>
+        </div>
+    </body>
+</html>

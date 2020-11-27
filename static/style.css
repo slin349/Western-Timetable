@@ -1,0 +1,40 @@
+ol {
+   list-style: none; 
+}
+
+li {
+    background-color: rgb(241, 183, 222);
+    border-radius: 10px;
+    padding-left: 10px;
+    height: 200px;
+    width: 1500px;
+}
+
+body {
+    background-color: rgb(252, 188, 252);
+}
+#LEC {
+    color: rgb(9, 90, 9);
+}
+
+#TUT {
+    color: rgb(221, 79, 79);
+}
+
+#LAB {
+    color: rgb(17, 0, 255);
+}
+
+h1 {
+    text-align: center;
+    color: whitesmoke;
+}
+
+#title {
+    margin: auto;
+    width: 50%;
+    height: 50px;
+    border-radius: 10px;
+    background-color: purple;
+}
+
