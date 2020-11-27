@@ -4,6 +4,7 @@ const app = express();
 const router = express.Router();
 const fs = require('fs'); //this is for node.js file system
 const jsonFile = require('./data/schedule.json');
+const userFile = require('./data/users.json');
 
 // ./ means in the current same level, and ../ means one file backwards
 //this line imports the data from another file
@@ -85,6 +86,9 @@ app.use((req, res, next) => { //everytime someone uses the server, it checks all
 
 //middleware to parse data in body as JSON used for POST and PUT
 router.use(express.json());
+
+//middleware to parse data in body as JSON used for POST and PUT
+app.use(express.json());
 
 //when accessing /api/timetable/subject
 router.route('/')
@@ -401,6 +405,33 @@ router.route('/:subjectcode/:course/:component?')
         }
     })
 
+//when user wants to login
+app.get('/login', (req,res) => {
+    //authenticate the user
+
+    console.log('hi');
+})
+
+//route for users (testing purpose)
+app.get('/users', (req,res) => {
+    res.json(users);
+})
+
+app.post('/users', (req, res) => {
+    const user = {name: req.body.name, password: req.body.password}
+
+    userFile [user.name] = [user]; //this includes the data to the file however does not save it
+        const data = JSON.stringify(userFile); //convert to JSON
+
+        //writing to JSON file
+        fs.writeFile('./data/users.json', data, (err) => {
+            if (err){
+                throw err;
+            }
+            console.log(`User added ${user.name}`);
+            res.status(201).send(users);
+        })
+})
 
 //Router for /timetable
 app.use ('/timetable', router);
