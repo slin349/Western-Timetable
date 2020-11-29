@@ -410,19 +410,27 @@ router.route('/:subjectcode/:course/:component?')
         }
     })
 
-//when user wants to login
-app.get('/login', (req,res) => {
-    //authenticate the user
-
-    console.log('hi');
-})
-
 //adding user to datab
 app.post('/users', async (req, res) => {
     const user = {email: req.body.email, name: req.body.username, password: req.body.password}
 
     //check to see if email is valid format
     const validator = emailvalidator.validate(`${req.body.email}`);
+
+    //if email is left blank
+    if (req.body.email === undefined) {
+        return res.status(400).send('Missing email entry, please enter email');
+    }
+
+    //if username is left blank
+    if (req.body.username === undefined) {
+        return res.status(400).send('Missing username entry, please enter username');
+    }
+
+    //if password is left blank
+    if (req.body.password === undefined) {
+        return res.status(400).send('Missing password entry, please enter password');
+    }
 
     //if not valid
     if (validator == false) {
