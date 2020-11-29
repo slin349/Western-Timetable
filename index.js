@@ -1,4 +1,6 @@
 //import
+require('dotenv').config();
+
 const express = require('express');
 const app = express();
 const router = express.Router();
@@ -6,6 +8,7 @@ const fs = require('fs'); //this is for node.js file system
 const jsonFile = require('./data/schedule.json');
 const userFile = require('./data/users.json');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // ./ means in the current same level, and ../ means one file backwards
 //this line imports the data from another file
@@ -452,27 +455,65 @@ app.post('/users/login', async (req, res) => {
 
     //search in json file if email exists
     const user = userFile[`${email}`];
+
+    //object for user email
+    const useremailobject = { email: email};
     
     //if email cannot be found in database
     if (user === undefined){
-        return res.status(400).send('Cannot find user');
+        return res.status(400).send('Cannot find user with email');
     }
-    
-    try {
-        //compare the two passwords
-        //if successful, user[1] refers to the json object and 1 is the index of the array that holds hashed password
-        if (await bcrypt.compare(userpass, user[1])){
-            res.send('Password Success');
-        }
-        //if not successful
-        else {
-            res.send('Password Not correct');
-        }
+    else {
+        try {
+            //compare the two passwords
+            //if successful, user[1] refers to the json object and 1 is the index of the array that holds hashed password
+            if (await bcrypt.compare(userpass, user[1])){
+                //res.send('Password Success');
 
-    }catch {
-        return res.status(500).send();
+                //creating access token and has user email saved inside
+                const accessToken = jwt.sign(useremailobject, process.env.ACCESS_TOKEN_SECRET);
+                res.json({accessToken: accessToken});
+            }
+            //if not successful
+            else {
+                res.send('Password Not correct');
+            }
+    
+        }catch {
+            return res.status(500).send();
+        }
     }
 })
+
+//with access from user, we can do function
+app.get('/users', authToken, (req, res) => {
+    //if entered correct token, they can see their information
+    res.send(userFile[`${req.useremail.email}`]);
+})
+
+//middleware to authenticate json web token
+function authToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+
+    //if there is an authHeader, then return authHeader token portion
+    const token = authHeader &&authHeader.split(' ')[1]
+
+    //chekc if token is valid if not, send no permission
+    if (token == null) {
+        console.log('failed');
+        return res.sendStatus(401).send('No permission');
+    }
+
+    //verify token
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, useremailobject) => {
+        //if token is not valid
+        if (err) {
+            return res.sendStatus(403).send('No access');
+        }
+        req.useremail = useremailobject;
+        next();
+    })
+}
 
 //Router for /timetable
 app.use ('/timetable', router);
