@@ -9,6 +9,7 @@ const jsonFile = require('./data/schedule.json');
 const userFile = require('./data/users.json');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const emailvalidator = require('email-validator');
 
 // ./ means in the current same level, and ../ means one file backwards
 //this line imports the data from another file
@@ -420,31 +421,39 @@ app.get('/login', (req,res) => {
 app.post('/users', async (req, res) => {
     const user = {email: req.body.email, name: req.body.username, password: req.body.password}
 
+    //check to see if email is valid format
+    const validator = emailvalidator.validate(`${req.body.email}`);
+
+    //if not valid
+    if (validator == false) {
+        return res.status(400).send('Email format not valid');
+    }
+    
     //if user already exists in database
     if (userFile[`${req.body.email}`] != undefined) {
-        res.status(400).send('User already registerd');
+        return res.status(400).send('User already registerd');
     }
-    else {
-        try {
-            //this part creates the hashed password using bcrypts salt, 10 being default
-            const hashPass = await bcrypt.hash(req.body.password, 10);
-    
-            //writing to database
-            userFile [user.email]= [user.name, hashPass]; //this includes the data to the file however does not save it
-            const data = JSON.stringify(userFile); //convert to JSON
-    
-            //writing to JSON file
-            fs.writeFile('./data/users.json', data, (err) => {
-                if (err){
-                    throw err;
-                }
-                console.log(`User added ${user.name}`);
-                res.status(201);
-            })
-        } catch {
-            res.status(500).send();
-        }
+   
+    try {
+        //this part creates the hashed password using bcrypts salt, 10 being default
+        const hashPass = await bcrypt.hash(req.body.password, 10);
+
+        //writing to database
+        userFile [user.email]= [user.name, hashPass]; //this includes the data to the file however does not save it
+        const data = JSON.stringify(userFile); //convert to JSON
+
+        //writing to JSON file
+        fs.writeFile('./data/users.json', data, (err) => {
+            if (err){
+                throw err;
+            }
+            console.log(`User added ${user.name}`);
+            res.status(201).send("Successful add!");
+        })
+    } catch {
+        res.status(500).send();
     }
+    
 })
 
 //logging in user
@@ -463,26 +472,24 @@ app.post('/users/login', async (req, res) => {
     if (user === undefined){
         return res.status(400).send('Cannot find user with email');
     }
-    else {
-        try {
-            //compare the two passwords
-            //if successful, user[1] refers to the json object and 1 is the index of the array that holds hashed password
-            if (await bcrypt.compare(userpass, user[1])){
-                //res.send('Password Success');
-
-                //creating access token and has user email saved inside
-                const accessToken = jwt.sign(useremailobject, process.env.ACCESS_TOKEN_SECRET);
-                res.json({accessToken: accessToken});
-            }
-            //if not successful
-            else {
-                res.send('Password Not correct');
-            }
     
-        }catch {
-            return res.status(500).send();
+    try {
+        //compare the two passwords
+        //if successful, user[1] refers to the json object and 1 is the index of the array that holds hashed password
+        if (await bcrypt.compare(userpass, user[1])){
+            //creating access token and has user email saved inside
+            const accessToken = jwt.sign(useremailobject, process.env.ACCESS_TOKEN_SECRET);
+            res.json({accessToken: accessToken});
         }
+        //if not successful
+        else {
+            res.send('Login not successful');
+        }
+
+    }catch {
+        return res.status(500).send();
     }
+    
 })
 
 //with access from user, we can do function
@@ -500,15 +507,14 @@ function authToken(req, res, next) {
 
     //chekc if token is valid if not, send no permission
     if (token == null) {
-        console.log('failed');
-        return res.sendStatus(401).send('No permission');
+        return res.sendStatus(401);
     }
 
     //verify token
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, useremailobject) => {
         //if token is not valid
         if (err) {
-            return res.sendStatus(403).send('No access');
+            return res.sendStatus(403);
         }
         req.useremail = useremailobject;
         next();
