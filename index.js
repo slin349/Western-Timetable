@@ -413,20 +413,15 @@ app.get('/login', (req,res) => {
     console.log('hi');
 })
 
-//route for users (testing purpose)
-app.get('/users', (req,res) => {
-    res.json(users);
-})
-
+//adding user to datab
 app.post('/users', async (req, res) => {
     const user = {email: req.body.email, name: req.body.username, password: req.body.password}
 
     try {
-        const salt = await bcrypt.genSalt();
-        const hashPass = await bcrypt.hash(req.body.password, salt);
-        console.log(salt);
-        console.log(hashPass);
+        //this part creates the hashed password using bcrypts salt, 10 being default
+        const hashPass = await bcrypt.hash(req.body.password, 10);
 
+        //writing to database
         userFile [user.email]= [user.name, hashPass]; //this includes the data to the file however does not save it
         const data = JSON.stringify(userFile); //convert to JSON
 
@@ -440,6 +435,36 @@ app.post('/users', async (req, res) => {
         })
     } catch {
         res.status(500).send();
+    }
+})
+
+//logging in user
+app.post('/users/login', async (req, res) => {
+    
+    const userpass = req.body.password;
+    const email = req.body.email;
+
+    //search in json file if email exists
+    const user = userFile[`${email}`];
+    
+    //if email cannot be found in database
+    if (user === undefined){
+        return res.status(400).send('Cannot find user');
+    }
+    
+    try {
+        //compare the two passwords
+        //if successful
+        if (await bcrypt.compare(userpass, user[1])){
+            res.send('Password Success');
+        }
+        //if not successful
+        else {
+            res.send('Password Not correct');
+        }
+
+    }catch {
+        return res.status(500).send();
     }
 })
 
