@@ -417,24 +417,30 @@ app.get('/login', (req,res) => {
 app.post('/users', async (req, res) => {
     const user = {email: req.body.email, name: req.body.username, password: req.body.password}
 
-    try {
-        //this part creates the hashed password using bcrypts salt, 10 being default
-        const hashPass = await bcrypt.hash(req.body.password, 10);
-
-        //writing to database
-        userFile [user.email]= [user.name, hashPass]; //this includes the data to the file however does not save it
-        const data = JSON.stringify(userFile); //convert to JSON
-
-        //writing to JSON file
-        fs.writeFile('./data/users.json', data, (err) => {
-            if (err){
-                throw err;
-            }
-            console.log(`User added ${user.name}`);
-            res.status(201);
-        })
-    } catch {
-        res.status(500).send();
+    //if user already exists in database
+    if (userFile[`${req.body.email}`] != undefined) {
+        res.status(400).send('User already registerd');
+    }
+    else {
+        try {
+            //this part creates the hashed password using bcrypts salt, 10 being default
+            const hashPass = await bcrypt.hash(req.body.password, 10);
+    
+            //writing to database
+            userFile [user.email]= [user.name, hashPass]; //this includes the data to the file however does not save it
+            const data = JSON.stringify(userFile); //convert to JSON
+    
+            //writing to JSON file
+            fs.writeFile('./data/users.json', data, (err) => {
+                if (err){
+                    throw err;
+                }
+                console.log(`User added ${user.name}`);
+                res.status(201);
+            })
+        } catch {
+            res.status(500).send();
+        }
     }
 })
 
@@ -454,7 +460,7 @@ app.post('/users/login', async (req, res) => {
     
     try {
         //compare the two passwords
-        //if successful
+        //if successful, user[1] refers to the json object and 1 is the index of the array that holds hashed password
         if (await bcrypt.compare(userpass, user[1])){
             res.send('Password Success');
         }
