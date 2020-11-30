@@ -10,6 +10,7 @@ const userFile = require('./data/users.json');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const emailvalidator = require('email-validator');
+const cookiez = require('cookie-parser');
 
 // ./ means in the current same level, and ../ means one file backwards
 //this line imports the data from another file
@@ -17,6 +18,9 @@ const datab = require('./data/Lab3-timetable-data');
 
 //defines port
 const port = process.env.PORT || 3000;
+
+//cookie parser
+app.use(cookiez());
 
 //sanitization
 //checks to see if database has coursecode
@@ -488,8 +492,13 @@ app.post('/users/login', async (req, res) => {
             //creating access token and has user email saved inside
             const accessToken = generateAccessToken(useremailobject);
 
-            //creating a refresh token
-            res.json({accessToken: accessToken});
+            //creating a access token
+            res.cookie("useraccesstoken", accessToken, {
+                httpOnly: true,
+                secure: false
+            })
+
+            res.send('Successful login');
         }
         //if not successful
         else {
@@ -572,25 +581,24 @@ app.post('/admin/enable', (req, res) => {
     res.send(`${email} is enabled!`);
 })
 
-//logging out user !@#$!@$!@$!@ NEED TO DO SOMEHOW rn, token expiring is kinda like logging out
-app.delete('/users/logout', (req, res) => {
-    
+//logging out user
+app.post('/users/logout', (req, res) => {
+    //clear cookie
+    res.clearCookie("useraccesstoken", { httpOnly: true, secure: false});
+    return res.status(200).send({message: "Logout Success"})
 })
 
 //middleware to authenticate json web token
 function authToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-
-    //if there is an authHeader, then return authHeader token portion
-    const token = authHeader &&authHeader.split(' ')[1]
+    const userauthtoken = req.cookies.useraccesstoken;
 
     //chekc if token is valid if not, send no permission
-    if (token == null) {
+    if (userauthtoken == null) {
         return res.sendStatus(401);
     }
 
     //verify token
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, useremailobject) => {
+    jwt.verify(userauthtoken, process.env.ACCESS_TOKEN_SECRET, (err, useremailobject) => {
         //if token is not valid
         if (err) {
             return res.sendStatus(403);
@@ -603,7 +611,7 @@ function authToken(req, res, next) {
 //create function to create an accesstoken
 function generateAccessToken(useremailobject) {
     //return the token with expiration time of 10 minutes
-    return jwt.sign(useremailobject, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "10m"});
+    return jwt.sign(useremailobject, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "1d"});
 }
 
 //Router for /timetable
