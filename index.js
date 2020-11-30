@@ -412,7 +412,7 @@ router.route('/:subjectcode/:course/:component?')
 
 //adding user to datab
 app.post('/users', async (req, res) => {
-    const user = {email: req.body.email, name: req.body.username, password: req.body.password}
+    const user = {email: req.body.email, name: req.body.username, password: req.body.password, disabled: 'false', verified: 'false'}
 
     //check to see if email is valid format
     const validator = emailvalidator.validate(`${req.body.email}`);
@@ -447,7 +447,7 @@ app.post('/users', async (req, res) => {
         const hashPass = await bcrypt.hash(req.body.password, 10);
 
         //writing to database
-        userFile [user.email]= [user.name, hashPass]; //this includes the data to the file however does not save it
+        userFile [user.email]= [user.name, hashPass, user.disabled, user.verified]; //this includes the data to the file however does not save it
         const data = JSON.stringify(userFile); //convert to JSON
 
         //writing to JSON file
@@ -486,7 +486,9 @@ app.post('/users/login', async (req, res) => {
         //if successful, user[1] refers to the json object and 1 is the index of the array that holds hashed password
         if (await bcrypt.compare(userpass, user[1])){
             //creating access token and has user email saved inside
-            const accessToken = jwt.sign(useremailobject, process.env.ACCESS_TOKEN_SECRET);
+            const accessToken = generateAccessToken(useremailobject);
+
+            //creating a refresh token
             res.json({accessToken: accessToken});
         }
         //if not successful
@@ -505,6 +507,77 @@ app.get('/users', authToken, (req, res) => {
     //if entered correct token, they can see their information
     res.send(userFile[`${req.useremail.email}`]);
 })
+
+//verifying email
+app.post('/users/login/verify', (req, res) => {
+    const email = req.body.email;
+
+    //change to true for verified
+    userFile[`${email}`][3] = "true";
+
+    //write to file
+    const data = JSON.stringify(userFile);
+
+    //writing to JSON file
+    fs.writeFile('./data/users.json', data, (err) => {
+        if (err){
+            throw err;
+        }
+        console.log(`${email} is verified!`);
+    })
+    
+    res.send(`${email} is verified!`);
+
+})
+
+//disabling account
+app.post('/admin/disable', (req, res) => {
+    const email = req.body.email;
+
+    //change to true for disabling an account
+    userFile[`${email}`][2] = "true";
+
+    //write to file
+    const data = JSON.stringify(userFile);
+
+    //writing to JSON file
+    fs.writeFile('./data/users.json', data, (err) => {
+        if (err){
+            throw err;
+        }
+        console.log(`${email} is disabled!`);
+    })
+    
+    res.send(`${email} is disabled!`);
+})
+
+//enabling account
+app.post('/admin/enable', (req, res) => {
+    const email = req.body.email;
+
+    //change to true for disabling an account
+    userFile[`${email}`][2] = "false";
+
+    //write to file
+    const data = JSON.stringify(userFile);
+
+    //writing to JSON file
+    fs.writeFile('./data/users.json', data, (err) => {
+        if (err){
+            throw err;
+        }
+        console.log(`${email} is enabled!`);
+    })
+    
+    res.send(`${email} is enabled!`);
+})
+
+//logging out user
+app.delete('/users/logout', (req, res) => {
+    
+})
+
+
 
 //middleware to authenticate json web token
 function authToken(req, res, next) {
@@ -527,6 +600,11 @@ function authToken(req, res, next) {
         req.useremail = useremailobject;
         next();
     })
+}
+
+//create function to create an accesstoken
+function generateAccessToken(useremailobject) {
+    return jwt.sign(useremailobject, process.env.ACCESS_TOKEN_SECRET);
 }
 
 //Router for /timetable
