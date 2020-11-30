@@ -1,0 +1,30 @@
+{
+  "name": "se3316-slin349-lab3",
+  "version": "1.0.0",
+  "description": "Simple back-end and front-end application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slin349/se3316-slin349-lab3.git"
+  },
+  "author": "Steven Lin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/slin349/se3316-slin349-lab3/issues"
+  },
+  "homepage": "https://github.com/slin349/se3316-slin349-lab3#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "dotenv": "^8.2.0",
+    "email-validator": "^2.0.4",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
