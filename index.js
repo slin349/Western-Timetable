@@ -572,12 +572,10 @@ app.post('/admin/enable', (req, res) => {
     res.send(`${email} is enabled!`);
 })
 
-//logging out user
+//logging out user !@#$!@$!@$!@ NEED TO DO SOMEHOW rn, token expiring is kinda like logging out
 app.delete('/users/logout', (req, res) => {
     
 })
-
-
 
 //middleware to authenticate json web token
 function authToken(req, res, next) {
@@ -604,7 +602,8 @@ function authToken(req, res, next) {
 
 //create function to create an accesstoken
 function generateAccessToken(useremailobject) {
-    return jwt.sign(useremailobject, process.env.ACCESS_TOKEN_SECRET);
+    //return the token with expiration time of 10 minutes
+    return jwt.sign(useremailobject, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "10m"});
 }
 
 //Router for /timetable
