@@ -109,5 +109,5 @@ export class LoginpageComponent implements OnInit {
       this.link = res;
     })
   }
-
+  
 }

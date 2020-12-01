@@ -21,9 +21,7 @@
     <a class="card" routerLink="/login">
       <span>Login</span>
     </a>
-    <a class="card">
-      <span>Logout</span>
-    </a>
+    <button (click)="logoutFunction()" routerLink="/about">Logout</button>
 </div>
 
 <router-outlet></router-outlet>

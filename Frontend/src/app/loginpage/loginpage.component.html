@@ -23,9 +23,9 @@
     <input type="password" maxlength="30" (change)="updateregPassword($event.target.value)">
     <div>
         <button id="registerbutton" (click)="registerAccount()">Register</button>
+        <a href= "{{ link }}" target="_blank"> Verify </a>
         <span id='status'>
             {{ statusMessage }}
         </span>
-        <a href= "{{ link }}" target="_blank"> Verify </a>
     </div>
 </div>

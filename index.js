@@ -470,7 +470,7 @@ app.post('/users', async (req, res) => {
 })
 
 //logging in user
-app.post('/users/login', deactivatedUser, async (req, res) => {
+app.post('/users/login', async (req, res) => {
     
     const userpass = req.body.password;
     const email = req.body.email;
@@ -490,6 +490,11 @@ app.post('/users/login', deactivatedUser, async (req, res) => {
         //compare the two passwords
         //if successful, user[1] refers to the json object and 1 is the index of the array that holds hashed password
         if (await bcrypt.compare(userpass, user[1])){
+
+            //if account is set to dissabled
+            if (user[2] == "true") {
+                return res.status(500).send('Account is dissabled, please contact admin');
+            }
 
             //check to see if verified
             if (user[3] == "false") {
@@ -622,22 +627,10 @@ function authToken(req, res, next) {
     })
 }
 
-//middlware to check if user is deactivated
-function deactivatedUser(req, res, next){
-    const userEmail=req.body.email;
-    const user = userFile[`${userEmail}`];
-    
-    //if account is set to dissabled
-    if (user[2] == "true") {
-        return res.status(500).send('Account is dissabled, please contact admin');
-    }
-    next();
-}
-
 //create function to create an accesstoken
 function generateAccessToken(useremailobject) {
-    //return the token with expiration time of 10 minutes
-    return jwt.sign(useremailobject, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "1d"});
+    //return the token with expiration time of 1hr
+    return jwt.sign(useremailobject, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "1h"});
 }
 
 //Router for /timetable
