@@ -489,6 +489,19 @@ app.post('/users/login', async (req, res) => {
         //compare the two passwords
         //if successful, user[1] refers to the json object and 1 is the index of the array that holds hashed password
         if (await bcrypt.compare(userpass, user[1])){
+
+            //if account is set to dissabled
+            if (user[2] == "true") {
+                //clear cookies if dissabled account to not allow access
+                res.clearCookie("useraccesstoken", { httpOnly: true, secure: false});
+                return res.send('Account is dissabled');
+            }
+
+            //check to see if verified
+            if (user[3] == "false") {
+                return res.send('Account needs to be verified');
+            }
+
             //creating access token and has user email saved inside
             const accessToken = generateAccessToken(useremailobject);
 
