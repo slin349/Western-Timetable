@@ -100,7 +100,14 @@ export class LoginpageComponent implements OnInit {
 
   reVerify(){
     const email = this.loginemail;
-    fetch (`http://localhost:3000/users/reverify/${email}`);
+    fetch (`http://localhost:3000/users/reverify/${email}`)
+    .then(res => {
+      return res.text();
+    })
+    .then (res => {
+      this.statusloginMessage = 'Email re-verified, click on verify'
+      this.link = res;
+    })
   }
 
 }
