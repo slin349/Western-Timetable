@@ -1,0 +1,31 @@
+<div class='login container'>
+    <h1>Login</h1>
+    <p for="loginemail">Enter Email:</p>
+    <input type="text" maxlength="30" (change)="updateloginEmail($event.target.value)">
+    <p for="loginemail">Enter password:</p>
+    <input type="password" maxlength="30"(change)="updateloginPassword($event.target.value)">
+    <div>
+        <button (click)="loginAccount();">Login</button>
+        <button (click)="reVerify();">Re-Verify</button>
+        <span id='status'>
+            {{ statusloginMessage }}
+        </span>
+    </div>
+</div>
+
+<div class='register container'>
+    <h1>Register</h1>
+    <p for="loginemail">Enter Email:</p>
+    <input type="text" maxlength="30" (change)="updateregEmail($event.target.value)">
+    <p for="loginusername">Enter username:</p>
+    <input type="text" maxlength="20" (change)="updateregUsername($event.target.value)">
+    <p for="loginemail">Enter password:</p>
+    <input type="password" maxlength="30" (change)="updateregPassword($event.target.value)">
+    <div>
+        <button id="registerbutton" (click)="registerAccount()">Register</button>
+        <span id='status'>
+            {{ statusMessage }}
+        </span>
+        <a href= "{{ link }}" target="_blank"> Verify </a>
+    </div>
+</div>

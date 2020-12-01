@@ -422,17 +422,17 @@ app.post('/users', async (req, res) => {
     const validator = emailvalidator.validate(`${req.body.email}`);
 
     //if email is left blank
-    if (req.body.email === undefined) {
+    if (req.body.email == "") {
         return res.status(400).send('Missing email entry, please enter email');
     }
 
     //if username is left blank
-    if (req.body.username === undefined) {
+    if (req.body.username == "") {
         return res.status(400).send('Missing username entry, please enter username');
     }
 
     //if password is left blank
-    if (req.body.password === undefined) {
+    if (req.body.password == "") {
         return res.status(400).send('Missing password entry, please enter password');
     }
 
@@ -460,7 +460,8 @@ app.post('/users', async (req, res) => {
                 throw err;
             }
             console.log(`User added ${user.name}`);
-            res.status(201).send("Successful add!");
+            
+            res.status(201).send(`http://localhost:3000/users/login/${user.email}`);
         })
     } catch {
         res.status(500).send();
@@ -493,13 +494,12 @@ app.post('/users/login', async (req, res) => {
             //if account is set to dissabled
             if (user[2] == "true") {
                 //clear cookies if dissabled account to not allow access
-                res.clearCookie("useraccesstoken", { httpOnly: true, secure: false});
-                return res.send('Account is dissabled');
+                return res.status(500).send('Account is dissabled');
             }
 
             //check to see if verified
             if (user[3] == "false") {
-                return res.send('Account needs to be verified');
+                return res.status(500).send('Account needs to be verified');
             }
 
             //creating access token and has user email saved inside
@@ -515,11 +515,11 @@ app.post('/users/login', async (req, res) => {
         }
         //if not successful
         else {
-            res.send('Login not successful');
+            res.status(500).send('Login not successful');
         }
 
     }catch {
-        return res.status(500).send();
+        return res.status(500).send('Password incorrect');
     }
     
 })
@@ -531,8 +531,8 @@ app.get('/users', authToken, (req, res) => {
 })
 
 //verifying email
-app.post('/users/login/verify', (req, res) => {
-    const email = req.body.email;
+app.get('/users/login/:email', (req, res) => {
+    const email = req.params.email;
 
     //change to true for verified
     userFile[`${email}`][3] = "true";
@@ -550,6 +550,13 @@ app.post('/users/login/verify', (req, res) => {
     
     res.send(`${email} is verified!`);
 
+})
+
+//resend verification
+app.get('/users/reverify/:email', (req, res) => {
+    const email = req.params.email;
+
+    res.status(201).send(`http://localhost:3000/users/login/${email}`);
 })
 
 //disabling account
