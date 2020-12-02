@@ -654,12 +654,13 @@ app.get('/search/:searchz', (req, res) => {
         const courseLowercase = content.catalog_nbr + (content.className).toLowerCase();
 
         //checks the similarity to perform soft matching
+        const similaritychk = stringSimilarity.compareTwoStrings(`${keyword}`, `${coursecodeandcoursename}`);
         const similaritycheckOne = stringSimilarity.compareTwoStrings(`${keywordModified}`, `${coursecodeandcoursename}`);
         const similaritycheckTwo = stringSimilarity.compareTwoStrings(`${keywordUpper}`, `${coursecodeandcoursename}`);
         const similaritycheckThree = stringSimilarity.compareTwoStrings(`${keywordLower}`, `${courseLowercase}`);
 
         //basically if half of the content is similar then move it into list
-        if (similaritycheckOne > 0.3 || similaritycheckTwo > 0.3 || similaritycheckThree > 0.3) {
+        if (similaritychk > 0.1 || similaritycheckOne > 0.3 || similaritycheckTwo > 0.3 || similaritycheckThree > 0.3) {
             result.push(content);
         }
 
