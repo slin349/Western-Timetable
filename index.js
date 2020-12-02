@@ -11,6 +11,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const emailvalidator = require('email-validator');
 const cookiez = require('cookie-parser');
+const stringSimilarity = require('string-similarity');
 
 // ./ means in the current same level, and ../ means one file backwards
 //this line imports the data from another file
@@ -422,6 +423,7 @@ router.route('/:subjectcode/:course/:component?')
             res.status(404).send(`Subject ${subjcode} with Coursecode ${coursecode} was not found!`);
         }
     })
+
 //registering user to datab
 app.post('/users', async (req, res) => {
     const user = {email: req.body.email, name: req.body.username, password: req.body.password, disabled: 'false', verified: 'false'}
@@ -622,6 +624,49 @@ app.post('/users/logout', (req, res) => {
     return res.status(200).send({message: "Logout Success"})
 })
 
+//searching by keyword
+app.get('/search/:searchz', (req, res) => {
+    const keyword = req.params.searchz;
+
+    //to remove white space
+    const keywordModified = keyword.replace(/\s/g, "");
+
+    const keywordUpper = keywordModified.toUpperCase();
+    const keywordLower = keywordModified.toLowerCase();
+
+    const result = [];
+
+    const chkr = sanitizeScheduleName(keyword);
+
+    //check if special characters are inputted
+    if (!chkr) {
+        return res.status(400).send("Special characters are not allowed!");
+    }
+    
+    //check if keyword is 4 characters
+    if (keyword.length < 4) {
+        return res.status(400).send("Keyword must be atleast 4 characters long");
+    }
+
+    //itterate through database and see if courses exist with given keyword
+    datab.forEach(content => {
+        const coursecodeandcoursename = content.catalog_nbr + content.className;
+        const courseLowercase = content.catalog_nbr + (content.className).toLowerCase();
+
+        //checks the similarity to perform soft matching
+        const similaritycheckOne = stringSimilarity.compareTwoStrings(`${keywordModified}`, `${coursecodeandcoursename}`);
+        const similaritycheckTwo = stringSimilarity.compareTwoStrings(`${keywordUpper}`, `${coursecodeandcoursename}`);
+        const similaritycheckThree = stringSimilarity.compareTwoStrings(`${keywordLower}`, `${courseLowercase}`);
+
+        //basically if half of the content is similar then move it into list
+        if (similaritycheckOne > 0.3 || similaritycheckTwo > 0.3 || similaritycheckThree > 0.3) {
+            result.push(content);
+        }
+
+    })
+
+    res.send(result);
+})
 //middleware to authenticate json web token
 function authToken(req, res, next) {
     const userauthtoken = req.cookies.useraccesstoken;
