@@ -11,8 +11,10 @@
         <li *ngFor="let schedule of schedules; let i=index">
             <div>
                 <h2>Schedule: {{ schedule[0] }}</h2>
+                <p>Created by: </p>
                 <div *ngFor="let element of schedule;">
                     <p> {{ element.SubjectCode }} {{ element.CourseCode }}</p>
+                    <p>Modified On: {{ element.date }} </p>
                 </div>
             </div>
         </li>

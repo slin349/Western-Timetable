@@ -212,7 +212,10 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
         const schedulename = req.params.schedulename;
         const subjectcode = req.params.subjectcode;
         const coursecode = req.params.coursecode;
-        
+        const todaysDate = new Date();
+
+        const modifyDate = (todaysDate.getMonth()+1) + "/" + todaysDate.getDate() + "/" + todaysDate.getFullYear();
+
         //sanitization
         var chkr = sanitizeScheduleName(schedulename);
         var chkr2 = sanitizeSubjectCode(subjectcode);
@@ -240,6 +243,7 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
 
                 jsonFile[schedulename][i].SubjectCode = subjectcode;
                 jsonFile[schedulename][i].CourseCode = coursecode;
+                jsonFile[schedulename][i].date = modifyDate;
 
                 const data = JSON.stringify(jsonFile);
 
@@ -257,7 +261,8 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
         //create new object assuming it does not exist
         const userobject = {
             "SubjectCode": subjectcode,
-            "CourseCode": coursecode
+            "CourseCode": coursecode,
+            "date": modifyDate
         }
 
         jsonFile[schedulename].push(userobject); //push to JSON file array
@@ -426,7 +431,7 @@ router.route('/:subjectcode/:course/:component?')
 
 //registering user to datab
 app.post('/users', async (req, res) => {
-    const user = {email: req.body.email, name: req.body.username, password: req.body.password, disabled: 'false', verified: 'false'}
+    const user = {email: req.body.email, name: req.body.username, password: req.body.password, disabled: 'false', verified: 'false', admin: 'false'}
 
     //check to see if email is valid format
     const validator = emailvalidator.validate(`${req.body.email}`);
@@ -468,7 +473,7 @@ app.post('/users', async (req, res) => {
         const hashPass = await bcrypt.hash(req.body.password, 10);
 
         //writing to database
-        userFile [user.email]= [user.name, hashPass, user.disabled, user.verified]; //this includes the data to the file however does not save it
+        userFile [user.email]= [user.name, hashPass, user.disabled, user.verified, user.admin]; //this includes the data to the file however does not save it
         const data = JSON.stringify(userFile); //convert to JSON
 
         //writing to JSON file

@@ -9,7 +9,6 @@ export class ScheduleComponent implements OnInit {
   schedulename = "";
   errorMessage = "";
   deleteschedulename = "";
-
   schedules = [];
   tempschedules = [];
 
