@@ -36,22 +36,6 @@
     <input type="text" maxlength="15" (change)="updateKeyword($event.target.value)">
     <button (click)="keywordSearch()">Search</button>
     <span> {{ keywordMessage }}</span>
-
-  </div>
-
-  <div id="selectcourse">
-    <label for="schedulename" >Enter Schedule Name:</label>
-    <input type="text" id="schedulenamebox" maxlength="20" (change)="updateScheduleName($event.target.value)">
-    <label for="subjectname" >Enter Subject:</label>
-    <input type="text" id="subjectbox" maxlength="15" (change)="updateSubjectName($event.target.value)">
-    <label for="coursename" >Enter Course:</label>
-    <input type="text" id="coursebox" maxlength="8" (change)="updateCourseCode2($event.target.value)">
-    <span class="buttonspan">
-      <button id="submitcourse" (click)="addToSchedule()">Submit</button>
-    </span>
-    <span id="coursestatus">
-      {{ errorMessage }}
-    </span>
   </div>
 
   <div id="courseinfo">

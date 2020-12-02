@@ -1,0 +1,20 @@
+<div id="title">
+    <h1>Schedules</h1>
+</div>
+
+<span id="schedulestatus">
+    {{ errorMessage }}
+</span>
+
+<div id="schedulecontainer">
+    <ol id="schedules">
+        <li *ngFor="let schedule of schedules; let i=index">
+            <div>
+                <h2>Schedule: {{ schedule[0] }}</h2>
+                <div *ngFor="let element of schedule;">
+                    <p> {{ element.SubjectCode }} {{ element.CourseCode }}</p>
+                </div>
+            </div>
+        </li>
+    </ol>
+</div>

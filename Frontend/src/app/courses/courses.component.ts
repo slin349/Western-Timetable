@@ -76,7 +76,6 @@ export class CoursesComponent implements OnInit {
       fetch(`http://localhost:3000/timetable/${this.subjectname}/${this.coursecode}`) //fetch based on subject name and coursecode
       .then (res => res.json())
       .then (data => {
-        console.log(data);
         this.courseinfo = data;
       })
     }
@@ -139,7 +138,6 @@ export class CoursesComponent implements OnInit {
       if (res.ok) {
         res.json()
         .then (data => {
-          console.log(data);
           this.courseinfo = data;
         })
       }

@@ -661,7 +661,7 @@ app.get('/search/:searchz', (req, res) => {
         const similaritycheckThree = stringSimilarity.compareTwoStrings(`${keywordLower}`, `${courseLowercase}`);
 
         //basically if half of the content is similar then move it into list
-        if (similaritychk > 0.7 || similaritycheckOne > 0.3 || similaritycheckTwo > 0.3 || similaritycheckThree > 0.3) {
+        if (similaritychk > 0.7 || similaritycheckOne > 0.3 || similaritycheckTwo > 0.25 || similaritycheckThree > 0.3) {
             result.push(content);
         }
 
