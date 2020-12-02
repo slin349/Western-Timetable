@@ -414,12 +414,14 @@ router.route('/:subjectcode/:course/:component?')
         }
     })
 
-//adding user to datab
+//registering user to datab
 app.post('/users', async (req, res) => {
     const user = {email: req.body.email, name: req.body.username, password: req.body.password, disabled: 'false', verified: 'false'}
 
     //check to see if email is valid format
     const validator = emailvalidator.validate(`${req.body.email}`);
+
+    const checker = sanitizeScheduleName(user.name);
 
     //if email is left blank
     if (req.body.email == "") {
@@ -444,6 +446,11 @@ app.post('/users', async (req, res) => {
     //if user already exists in database
     if (userFile[`${req.body.email}`] != undefined) {
         return res.status(400).send('User already registerd');
+    }
+
+    //if true sanitization returns true
+    if (!checker){
+        return res.status(404).send(`Special characters inputted! NOT ALLOWED!`);
     }
    
     try {
