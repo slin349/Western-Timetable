@@ -350,6 +350,7 @@ router.route('/:subjectcode')
         })
         res.send(result); //sends out result
     })
+    
 
 //when user wants to enter subject code and course code with optional component   
 router.route('/:subjectcode/:course/:component?')
@@ -378,9 +379,13 @@ router.route('/:subjectcode/:course/:component?')
         if (typeof component == "undefined" && chkr){
             const newarray = datab.filter(p => p.subject === subjcode && p.catalog_nbr == coursecode); //creates a new array that filters out where subject is equal to user input
             
+            const subjectname = (newarray[0].subject);
+            const coursecodenum = (newarray[0].catalog_nbr);
+            const classnamez = (newarray[0].className);
+
             //map to create new array that just has the courseinfo
             const resultarray = newarray.map(element => {
-                return {Courseinfo: element.course_info}
+                return {Subject: subjectname, Catalog_nbr: coursecodenum, ClassName: classnamez, Courseinfo: element.course_info}
             })
 
             res.send(resultarray); //sends out result
@@ -396,10 +401,14 @@ router.route('/:subjectcode/:course/:component?')
 
             if (chkr2) {
                 const newarray = datab.filter(p => p.subject === subjcode && p.catalog_nbr == coursecode && p.course_info[0].ssr_component === component); //creates a new array that filters out where subject is equal to user input
-            
+                
+                const subjectname = (newarray[0].subject);
+                const coursecodenum = (newarray[0].catalog_nbr);
+                const classnamez = (newarray[0].className);
+
                 //map to create new array that just has the courseinfo
                 const resultarray = newarray.map(element => {
-                    return {Courseinfo: element.course_info}
+                    return {Subject: subjectname, Catalog_nbr: coursecodenum, ClassName: classnamez, Courseinfo: element.course_info}
                 })
     
                 res.send(resultarray);    
@@ -413,7 +422,6 @@ router.route('/:subjectcode/:course/:component?')
             res.status(404).send(`Subject ${subjcode} with Coursecode ${coursecode} was not found!`);
         }
     })
-
 //registering user to datab
 app.post('/users', async (req, res) => {
     const user = {email: req.body.email, name: req.body.username, password: req.body.password, disabled: 'false', verified: 'false'}
