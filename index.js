@@ -131,7 +131,7 @@ router.route('/schedule_all')
             //finds schedule name
             schedulename = x[i][0];
             //using schedule name determine number of courses through keys
-            numofcourses = (Object.keys(jsonFile[schedulename]).length)-1;
+            numofcourses = (Object.keys(jsonFile[schedulename]).length)-2;
 
             //create object
             tempobj = {
@@ -180,6 +180,9 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
     //use post because you are not trying to overwrite
     .post ((req, res) => {
         const schedulename = req.params.schedulename; //gets the user inputted body
+        const date = new Date();
+
+        const todaysDate = (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear();
 
         var chkr = sanitizeScheduleName(schedulename);
 
@@ -193,7 +196,7 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
             return res.status(409).send(`Schedule name ${schedulename} exists!`);
         }
 
-        jsonFile[schedulename] = [schedulename]; //this includes the data to the file however does not save it
+        jsonFile[schedulename] = [schedulename, todaysDate]; //this includes the data to the file however does not save it
         const data = JSON.stringify(jsonFile); //convert to JSON
 
         //writing to JSON file
@@ -212,9 +215,9 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
         const schedulename = req.params.schedulename;
         const subjectcode = req.params.subjectcode;
         const coursecode = req.params.coursecode;
-        const todaysDate = new Date();
+        const todayzDate = new Date();
 
-        const modifyDate = (todaysDate.getMonth()+1) + "/" + todaysDate.getDate() + "/" + todaysDate.getFullYear();
+        const modifyDate = (todayzDate.getMonth()+1) + "/" + todayzDate.getDate() + "/" + todayzDate.getFullYear();
 
         //sanitization
         var chkr = sanitizeScheduleName(schedulename);
@@ -243,7 +246,7 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
 
                 jsonFile[schedulename][i].SubjectCode = subjectcode;
                 jsonFile[schedulename][i].CourseCode = coursecode;
-                jsonFile[schedulename][i].date = modifyDate;
+                jsonFile[schedulename][1] = modifyDate;
 
                 const data = JSON.stringify(jsonFile);
 
@@ -261,8 +264,7 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
         //create new object assuming it does not exist
         const userobject = {
             "SubjectCode": subjectcode,
-            "CourseCode": coursecode,
-            "date": modifyDate
+            "CourseCode": coursecode
         }
 
         jsonFile[schedulename].push(userobject); //push to JSON file array

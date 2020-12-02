@@ -60,6 +60,7 @@ export class ScheduleComponent implements OnInit {
   }
 
   displaySchedule(){
+    var count = 0;
     fetch (`http://localhost:3000/timetable/schedule_all`)
     .then (res => {
         if (res.ok){
@@ -67,7 +68,15 @@ export class ScheduleComponent implements OnInit {
             .then (data => {
               this.tempschedules = data;
                 data.forEach(element => {
+                    count ++;
+
+                    //stop after 10 schedules
+                    if (count > 10){
+                      return;
+                    }
+
                     this.findCourses(element.ScheduleName);
+
                 })
             })
         }

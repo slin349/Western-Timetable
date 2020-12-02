@@ -12,9 +12,10 @@
             <div>
                 <h2>Schedule: {{ schedule[0] }}</h2>
                 <p>Created by: </p>
+                <p>Number of Courses: {{ tempschedules[i].NumberofCourses }}</p>
+                <p>Modified On: {{ schedule[1] }} </p>
                 <div *ngFor="let element of schedule;">
                     <p> {{ element.SubjectCode }} {{ element.CourseCode }}</p>
-                    <p>Modified On: {{ element.date }} </p>
                 </div>
             </div>
         </li>
