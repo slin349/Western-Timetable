@@ -19,7 +19,9 @@ export class CoursesComponent implements OnInit {
   coursecode2 = "";
   classname = "";
   show = false;
-  
+  keyword = "";
+  keywordMessage = "";
+
   constructor() { }
 
   ngOnInit(): void { //ngOnInit initiates the moment component loads
@@ -63,12 +65,18 @@ export class CoursesComponent implements OnInit {
     this.coursecode2 = coursecode;
   }
 
+  updateKeyword(keyword: string){
+    this.keyword = keyword;
+  }
+
   returnCourseInfo(){
+
     //for case they want all
     if (this.componentname == "ALL"){
       fetch(`http://localhost:3000/timetable/${this.subjectname}/${this.coursecode}`) //fetch based on subject name and coursecode
       .then (res => res.json())
       .then (data => {
+        console.log(data);
         this.courseinfo = data;
       })
     }
@@ -118,7 +126,34 @@ export class CoursesComponent implements OnInit {
     })
   }
 
+  keywordSearch(){
+    const keyword = this.keyword;
+
+    //if keyword is left blank
+    if (keyword == "") {
+      return this.keywordMessage = ('Keyword cannot be empty');
+    }
+
+    fetch (`http://localhost:3000/search/${keyword}`)
+    .then(res => {
+      if (res.ok) {
+        res.json()
+        .then (data => {
+          console.log(data);
+          this.courseinfo = data;
+        })
+      }
+      else {
+        return res.text();
+      }
+    })
+    .then (res => {
+      this.keywordMessage = res;
+    })
+  }
+
   togglediv(){
     this.show = !this.show;
   }
+
 }

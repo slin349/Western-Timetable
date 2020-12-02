@@ -386,7 +386,7 @@ router.route('/:subjectcode/:course/:component?')
 
             //map to create new array that just has the courseinfo
             const resultarray = newarray.map(element => {
-                return {Subject: subjectname, Catalog_nbr: coursecodenum, ClassName: classnamez, Courseinfo: element.course_info}
+                return {subject: subjectname, catalog_nbr: coursecodenum, className: classnamez, course_info: element.course_info}
             })
 
             res.send(resultarray); //sends out result
@@ -652,15 +652,16 @@ app.get('/search/:searchz', (req, res) => {
     datab.forEach(content => {
         const coursecodeandcoursename = content.catalog_nbr + content.className;
         const courseLowercase = content.catalog_nbr + (content.className).toLowerCase();
+        const courseNum = content.catalog_nbr;
 
         //checks the similarity to perform soft matching
-        const similaritychk = stringSimilarity.compareTwoStrings(`${keyword}`, `${coursecodeandcoursename}`);
+        const similaritychk = stringSimilarity.compareTwoStrings(`${keyword}`, `${courseNum}`);
         const similaritycheckOne = stringSimilarity.compareTwoStrings(`${keywordModified}`, `${coursecodeandcoursename}`);
         const similaritycheckTwo = stringSimilarity.compareTwoStrings(`${keywordUpper}`, `${coursecodeandcoursename}`);
         const similaritycheckThree = stringSimilarity.compareTwoStrings(`${keywordLower}`, `${courseLowercase}`);
 
         //basically if half of the content is similar then move it into list
-        if (similaritychk > 0.1 || similaritycheckOne > 0.3 || similaritycheckTwo > 0.3 || similaritycheckThree > 0.3) {
+        if (similaritychk > 0.7 || similaritycheckOne > 0.3 || similaritycheckTwo > 0.3 || similaritycheckThree > 0.3) {
             result.push(content);
         }
 
