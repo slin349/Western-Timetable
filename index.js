@@ -174,22 +174,34 @@ router.route('/schedule_all')
     })
 
 
-//this routing allows optional parameter
-router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
-
+//route for creating schedule
+router.route('/createschedule/:schedulename/:authorname?')
     //when user wants to create new schedule
     //use post because you are not trying to overwrite
     .post ((req, res) => {
         const schedulename = req.params.schedulename; //gets the user inputted body
+        const author = req.params.authorname;
+
         const date = new Date();
 
         const todaysDate = (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
         const todaysValue = Date.now();
 
         var chkr = sanitizeScheduleName(schedulename);
+        var authorchkr = sanitizeScheduleName(author);
+
+        //chekc if author is left empty
+        if (author == undefined){
+            return res.status(404).send(`Author is needed to create schedule`);
+        }
 
         //if true sanitization returns true
         if (!chkr){
+            return res.status(404).send(`Special characters inputted! NOT ALLOWED!`);
+        }
+
+        //check if input has special characters
+        if (!authorchkr){
             return res.status(404).send(`Special characters inputted! NOT ALLOWED!`);
         }
 
@@ -198,7 +210,7 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
             return res.status(409).send(`Schedule name ${schedulename} exists!`);
         }
 
-        jsonFile[schedulename] = [schedulename, todaysDate, todaysValue]; //this includes the data to the file however does not save it
+        jsonFile[schedulename] = [schedulename, author, todaysDate, todaysValue]; //this includes the data to the file however does not save it
         const data = JSON.stringify(jsonFile); //convert to JSON
 
         //writing to JSON file
@@ -210,6 +222,9 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
             res.status(200).send(`Schedule name ${schedulename} is added.`);
         })
     })
+
+//this routing allows optional parameter
+router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
     
     //use put because you are replacing data
     //adds/replaces courses to schedule

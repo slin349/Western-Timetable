@@ -71,7 +71,7 @@ export class ScheduleComponent implements OnInit {
                         .then (data => {
                           this.temparray.push(data);          
                           this.temparray.sort((a,b) => {
-                            return b[2] - a[2];
+                            return b[3] - a[3];
                           })
                         })
                     })
@@ -101,9 +101,9 @@ export class ScheduleComponent implements OnInit {
     //clear array
     this.courseinfo = [];
 
-    //if greater 3 means there is courses
-    if (this.schedules[i].length > 3){
-      for (var j = 3; j<this.schedules[i].length; j++ ){
+    //if greater 4 means there is courses
+    if (this.schedules[i].length > 4){
+      for (var j = 4; j<this.schedules[i].length; j++ ){
         const subjectname = this.schedules[i][j].SubjectCode;
         const coursecode = this.schedules[i][j].CourseCode;
 
