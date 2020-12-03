@@ -10,9 +10,9 @@ export class ScheduleComponent implements OnInit {
   errorMessage = "";
   deleteschedulename = "";
   schedules = [];
-  tempschedules = [];
   show = false;
   courseinfo = [];
+  temparray = [];
 
   constructor() { }
 
@@ -50,17 +50,6 @@ export class ScheduleComponent implements OnInit {
     })
   }
 
-  findCourses(schedulename: string){
-    this.schedules=[];
-    fetch (`http://localhost:3000/timetable/schedule/${schedulename}`)
-    .then (res => {
-        res.json()
-        .then (data => {
-          this.schedules.push(data);
-        })
-    })
-
-  }
 
   displaySchedule(){
     var count = 0;
@@ -69,7 +58,6 @@ export class ScheduleComponent implements OnInit {
         if (res.ok){
             res.json()
             .then (data => {
-              this.tempschedules = data;
                 data.forEach(element => {
                     count ++;
 
@@ -77,9 +65,16 @@ export class ScheduleComponent implements OnInit {
                     if (count > 10){
                       return;
                     }
-
-                    this.findCourses(element.ScheduleName);
-
+                    fetch (`http://localhost:3000/timetable/schedule/${element.ScheduleName}`)
+                    .then (res => {
+                        res.json()
+                        .then (data => {
+                          this.temparray.push(data);          
+                          this.temparray.sort((a,b) => {
+                            return b[2] - a[2];
+                          })
+                        })
+                    })
                 })
             })
         }
@@ -91,6 +86,7 @@ export class ScheduleComponent implements OnInit {
             }
         }
     })
+    this.schedules = this.temparray;
   }
 
   viewCourseInfo(value: any){

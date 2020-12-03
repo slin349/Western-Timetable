@@ -12,6 +12,7 @@ const jwt = require('jsonwebtoken');
 const emailvalidator = require('email-validator');
 const cookiez = require('cookie-parser');
 const stringSimilarity = require('string-similarity');
+//const privateSchedules = require('./data/privateschedules.json');
 
 // ./ means in the current same level, and ../ means one file backwards
 //this line imports the data from another file
@@ -269,6 +270,9 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
             "SubjectCode": subjectcode,
             "CourseCode": coursecode
         }
+
+        jsonFile[schedulename][1] = modifyDate;
+        jsonFile[schedulename][2] = todaysTime;
 
         jsonFile[schedulename].push(userobject); //push to JSON file array
 
@@ -703,6 +707,46 @@ app.get('/search/:searchz', (req, res) => {
     })
 
     res.send(result);
+})
+
+//create schedules for auth users
+app.post('/privateschedules/create', authToken, (req, res) => {
+    email = req.useremail.email;
+    schedulename = req.body.schedulename;
+    author = req.body.author;
+    description = req.body.description;
+    visibility = req.body.visibility;
+    
+    const checker = sanitizeScheduleName(user.name);
+
+    //if true sanitization returns true
+    if (!checker){
+        return res.status(404).send(`Special characters inputted! NOT ALLOWED!`);
+    }
+   
+    try {
+
+        //if schedule exists
+        if (privateSchedules[`${schedulename}`] != undefined) {
+        return res.status(400).send('Schedule name already exists');
+        }
+
+        //writing to database
+        userFile [user.email]= [user.name, hashPass, user.disabled, user.verified, user.admin]; //this includes the data to the file however does not save it
+        const data = JSON.stringify(userFile); //convert to JSON
+
+        //writing to JSON file
+        fs.writeFile('./data/users.json', data, (err) => {
+            if (err){
+                throw err;
+            }
+            console.log(`User added ${user.name}`);
+            
+            res.status(201).send(`http://localhost:3000/users/login/${user.email}`);
+        })
+    } catch {
+        res.status(500).send();
+    }
 })
 
 //middleware to authenticate json web token
