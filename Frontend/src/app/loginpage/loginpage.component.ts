@@ -15,6 +15,8 @@ export class LoginpageComponent implements OnInit {
   statusMessage= "";
   statusloginMessage= "";
   link = "";
+  changepassword = "";
+  changeMessage = "";
   constructor() { }
 
   ngOnInit(): void {
@@ -38,6 +40,10 @@ export class LoginpageComponent implements OnInit {
 
   updateloginPassword(password: string){
     this.loginpassword = password;
+  }
+
+  updatechangePassword(password: string){
+    this.changepassword = password;
   }
 
   registerAccount(){
@@ -110,4 +116,29 @@ export class LoginpageComponent implements OnInit {
     })
   }
   
+  updatePassword(){
+    const newPass = this.changepassword;
+
+    //if left blank
+    if (newPass == ""){
+      return this.changeMessage = 'Password cannot be blank';
+    }
+    
+    //fetch for update password
+    fetch(`http://localhost:3000/changepassword/${newPass}`, {
+      method: 'POST',
+      credentials: "include",
+    })
+    .then(res => {
+      if (res.ok){
+        return this.changeMessage = 'Sucessfully changed password!';
+      }
+      else {
+        return res.text();
+      }
+    })
+    .then (res => {
+      this.changeMessage = res;
+    })
+  }
 }
