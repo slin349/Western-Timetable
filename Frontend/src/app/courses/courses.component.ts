@@ -93,7 +93,7 @@ export class CoursesComponent implements OnInit {
               console.log(`Error: ${res.status}`);
           }
       })
-  }
+    }
   }
 
   addToSchedule(){

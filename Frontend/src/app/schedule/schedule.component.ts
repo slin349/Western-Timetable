@@ -11,6 +11,8 @@ export class ScheduleComponent implements OnInit {
   deleteschedulename = "";
   schedules = [];
   tempschedules = [];
+  show = false;
+  courseinfo = [];
 
   constructor() { }
 
@@ -57,6 +59,7 @@ export class ScheduleComponent implements OnInit {
           this.schedules.push(data);
         })
     })
+
   }
 
   displaySchedule(){
@@ -87,6 +90,22 @@ export class ScheduleComponent implements OnInit {
                 this.schedules=[];
             }
         }
+    })
+  }
+
+  viewCourseInfo(value: any){
+
+    //toggles div
+    this.show = !this.show;
+    
+    const temporaryArray = [];
+
+    fetch (`http://localhost:3000/timetable/schedule/${value}`)
+    .then (res => {
+        res.json()
+        .then (data => {
+          temporaryArray.push(data);
+        })
     })
   }
 

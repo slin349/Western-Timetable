@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoginpageComponent } from './loginpage/loginpage.component';
 import { AboutpageComponent } from './aboutpage/aboutpage.component';
 import { CoursesComponent } from './courses/courses.component';
-import {ScheduleComponent } from './schedule/schedule.component';
+import { ScheduleComponent } from './schedule/schedule.component';
 
 
 const routes: Routes = [

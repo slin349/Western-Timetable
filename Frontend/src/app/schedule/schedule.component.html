@@ -18,6 +18,11 @@
                     <p> {{ element.SubjectCode }} {{ element.CourseCode }}</p>
                 </div>
             </div>
+            <button value="{{ schedule[0] }}" (click)="viewCourseInfo($event.target.value)">Click to View More</button>
+            <ng-container *ngIf="show">
+                <p>hi</p> 
+             </ng-container>
         </li>
     </ol>
+    
 </div>

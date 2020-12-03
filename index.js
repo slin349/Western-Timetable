@@ -131,7 +131,7 @@ router.route('/schedule_all')
             //finds schedule name
             schedulename = x[i][0];
             //using schedule name determine number of courses through keys
-            numofcourses = (Object.keys(jsonFile[schedulename]).length)-2;
+            numofcourses = (Object.keys(jsonFile[schedulename]).length)-3;
 
             //create object
             tempobj = {
@@ -182,7 +182,8 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
         const schedulename = req.params.schedulename; //gets the user inputted body
         const date = new Date();
 
-        const todaysDate = (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear();
+        const todaysDate = (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        const todaysValue = Date.now();
 
         var chkr = sanitizeScheduleName(schedulename);
 
@@ -196,7 +197,7 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
             return res.status(409).send(`Schedule name ${schedulename} exists!`);
         }
 
-        jsonFile[schedulename] = [schedulename, todaysDate]; //this includes the data to the file however does not save it
+        jsonFile[schedulename] = [schedulename, todaysDate, todaysValue]; //this includes the data to the file however does not save it
         const data = JSON.stringify(jsonFile); //convert to JSON
 
         //writing to JSON file
@@ -217,7 +218,8 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
         const coursecode = req.params.coursecode;
         const todayzDate = new Date();
 
-        const modifyDate = (todayzDate.getMonth()+1) + "/" + todayzDate.getDate() + "/" + todayzDate.getFullYear();
+        const modifyDate = (todayzDate.getMonth()+1) + "/" + todayzDate.getDate() + "/" + todayzDate.getFullYear() + " " + todayzDate.getHours() + ":" + todayzDate.getMinutes() + ":" + todayzDate.getSeconds();
+        const todaysTime = Date.now();
 
         //sanitization
         var chkr = sanitizeScheduleName(schedulename);
@@ -247,6 +249,7 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
                 jsonFile[schedulename][i].SubjectCode = subjectcode;
                 jsonFile[schedulename][i].CourseCode = coursecode;
                 jsonFile[schedulename][1] = modifyDate;
+                jsonFile[schedulename][2] = todaysTime;
 
                 const data = JSON.stringify(jsonFile);
 
@@ -553,6 +556,31 @@ app.get('/users', authToken, (req, res) => {
     res.send(userFile[`${req.useremail.email}`]);
 })
 
+//allow user to change password
+app.post('/changepassword/:password', authToken, async (req, res) => {
+    const newpass = req.params.password;
+    const email = req.useremail.email;
+
+    //hash the password
+    const hashPass = await bcrypt.hash(newpass, 10);
+
+    console.log(userFile[`${email}`]);
+
+    //change password
+    userFile[`${email}`][1] = hashPass;
+
+    const data = JSON.stringify(userFile); //convert to JSON
+
+        //writing to JSON file
+        fs.writeFile('./data/users.json', data, (err) => {
+            if (err){
+                throw err;
+            }
+            res.status(201).send(`Password Changed`);
+        })
+
+})
+
 //verifying email
 app.get('/users/login/:email', (req, res) => {
     const email = req.params.email;
@@ -676,6 +704,7 @@ app.get('/search/:searchz', (req, res) => {
 
     res.send(result);
 })
+
 //middleware to authenticate json web token
 function authToken(req, res, next) {
     const userauthtoken = req.cookies.useraccesstoken;
