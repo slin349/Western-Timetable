@@ -50,7 +50,7 @@ export class ScheduleComponent implements OnInit {
     })
   }
 
-
+  //display schedule for public only
   displaySchedule(){
     var count = 0;
     fetch (`http://localhost:3000/timetable/schedule_all`)
@@ -69,10 +69,14 @@ export class ScheduleComponent implements OnInit {
                     .then (res => {
                         res.json()
                         .then (data => {
-                          this.temparray.push(data);          
-                          this.temparray.sort((a,b) => {
-                            return b[3] - a[3];
-                          })
+
+                          //if visibility is true
+                          if (data[4] == true){
+                            this.temparray.push(data);          
+                            this.temparray.sort((a,b) => {
+                            return b[6] - a[6];
+                            })
+                          }
                         })
                     })
                 })
@@ -102,8 +106,8 @@ export class ScheduleComponent implements OnInit {
     this.courseinfo = [];
 
     //if greater 4 means there is courses
-    if (this.schedules[i].length > 4){
-      for (var j = 4; j<this.schedules[i].length; j++ ){
+    if (this.schedules[i].length > 7){
+      for (var j = 7; j<this.schedules[i].length; j++ ){
         const subjectname = this.schedules[i][j].SubjectCode;
         const coursecode = this.schedules[i][j].CourseCode;
 

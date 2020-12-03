@@ -12,7 +12,6 @@ const jwt = require('jsonwebtoken');
 const emailvalidator = require('email-validator');
 const cookiez = require('cookie-parser');
 const stringSimilarity = require('string-similarity');
-//const privateSchedules = require('./data/privateschedules.json');
 
 // ./ means in the current same level, and ../ means one file backwards
 //this line imports the data from another file
@@ -174,13 +173,17 @@ router.route('/schedule_all')
     })
 
 
-//route for creating schedule
-router.route('/createschedule/:schedulename/:authorname?')
+//route for creating public schedules
+router.route('/createschedule/:schedulename/:authorname?/:description?')
+
     //when user wants to create new schedule
     //use post because you are not trying to overwrite
-    .post ((req, res) => {
+    .post (authToken, (req, res) => {
         const schedulename = req.params.schedulename; //gets the user inputted body
         const author = req.params.authorname;
+        var description = req.params.description;
+        const email = req.useremail.email;
+        const isPublic = true;
 
         const date = new Date();
 
@@ -190,9 +193,14 @@ router.route('/createschedule/:schedulename/:authorname?')
         var chkr = sanitizeScheduleName(schedulename);
         var authorchkr = sanitizeScheduleName(author);
 
-        //chekc if author is left empty
+        //check if author is left empty
         if (author == undefined){
             return res.status(404).send(`Author is needed to create schedule`);
+        }
+
+        //check if description is left empty
+        if (description == undefined){
+            description = "No description";
         }
 
         //if true sanitization returns true
@@ -210,7 +218,7 @@ router.route('/createschedule/:schedulename/:authorname?')
             return res.status(409).send(`Schedule name ${schedulename} exists!`);
         }
 
-        jsonFile[schedulename] = [schedulename, author, todaysDate, todaysValue]; //this includes the data to the file however does not save it
+        jsonFile[schedulename] = [schedulename, author, description, email, isPublic, todaysDate, todaysValue]; //this includes the data to the file however does not save it
         const data = JSON.stringify(jsonFile); //convert to JSON
 
         //writing to JSON file
@@ -228,7 +236,7 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
     
     //use put because you are replacing data
     //adds/replaces courses to schedule
-    .put ((req, res) => {
+    .put (authToken, (req, res) => {
         const schedulename = req.params.schedulename;
         const subjectcode = req.params.subjectcode;
         const coursecode = req.params.coursecode;
@@ -264,8 +272,8 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
 
                 jsonFile[schedulename][i].SubjectCode = subjectcode;
                 jsonFile[schedulename][i].CourseCode = coursecode;
-                jsonFile[schedulename][1] = modifyDate;
-                jsonFile[schedulename][2] = todaysTime;
+                jsonFile[schedulename][5] = modifyDate;
+                jsonFile[schedulename][6] = todaysTime;
 
                 const data = JSON.stringify(jsonFile);
 
@@ -286,8 +294,8 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
             "CourseCode": coursecode
         }
 
-        jsonFile[schedulename][1] = modifyDate;
-        jsonFile[schedulename][2] = todaysTime;
+        jsonFile[schedulename][5] = modifyDate;
+        jsonFile[schedulename][6] = todaysTime;
 
         jsonFile[schedulename].push(userobject); //push to JSON file array
 
@@ -324,7 +332,7 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
     })
 
     //delete specific schedule given name
-    .delete ((req, res) => {
+    .delete (authToken, (req, res) => {
         const schedulename = req.params.schedulename;
 
         //sanitize
@@ -724,44 +732,58 @@ app.get('/search/:searchz', (req, res) => {
     res.send(result);
 })
 
-//create schedules for auth users
-app.post('/privateschedules/create', authToken, (req, res) => {
-    email = req.useremail.email;
-    schedulename = req.body.schedulename;
-    author = req.body.author;
-    description = req.body.description;
-    visibility = req.body.visibility;
-    
-    const checker = sanitizeScheduleName(user.name);
+//create private schedules for auth users
+app.post('/privateschedules/create/:schedulename/:authorname?/:description?', authToken, (req, res) => {
+    const schedulename = req.params.schedulename; //gets the user inputted body
+    const author = req.params.authorname;
+    var description = req.params.description;
+    const email = req.useremail.email;
+    const isPublic = false;
+
+    const date = new Date();
+
+    const todaysDate = (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    const todaysValue = Date.now();
+
+    var chkr = sanitizeScheduleName(schedulename);
+    var authorchkr = sanitizeScheduleName(author);
+
+    //check if author is left empty
+    if (author == undefined){
+        return res.status(404).send(`Author is needed to create schedule`);
+    }
+
+    //check if description is left empty
+    if (description == undefined){
+        description = "No description";
+    }
 
     //if true sanitization returns true
-    if (!checker){
+    if (!chkr){
         return res.status(404).send(`Special characters inputted! NOT ALLOWED!`);
     }
-   
-    try {
 
-        //if schedule exists
-        if (privateSchedules[`${schedulename}`] != undefined) {
-        return res.status(400).send('Schedule name already exists');
-        }
-
-        //writing to database
-        userFile [user.email]= [user.name, hashPass, user.disabled, user.verified, user.admin]; //this includes the data to the file however does not save it
-        const data = JSON.stringify(userFile); //convert to JSON
-
-        //writing to JSON file
-        fs.writeFile('./data/users.json', data, (err) => {
-            if (err){
-                throw err;
-            }
-            console.log(`User added ${user.name}`);
-            
-            res.status(201).send(`http://localhost:3000/users/login/${user.email}`);
-        })
-    } catch {
-        res.status(500).send();
+    //check if input has special characters
+    if (!authorchkr){
+        return res.status(404).send(`Special characters inputted! NOT ALLOWED!`);
     }
+
+    //check if JSON file already has server name
+    if (jsonFile[schedulename] !== undefined) {
+        return res.status(409).send(`Schedule name ${schedulename} exists!`);
+    }
+
+    jsonFile[schedulename] = [schedulename, author, description, email, isPublic, todaysDate, todaysValue]; //this includes the data to the file however does not save it
+    const data = JSON.stringify(jsonFile); //convert to JSON
+
+    //writing to JSON file
+    fs.writeFile('./data/schedule.json', data, (err) => {
+        if (err){
+            throw err;
+        }
+        console.log(`Schedule name ${schedulename} is added.`);
+        res.status(200).send(`Schedule name ${schedulename} is added.`);
+    })
 })
 
 //middleware to authenticate json web token
