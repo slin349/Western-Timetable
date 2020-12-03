@@ -10,9 +10,9 @@ export class ScheduleComponent implements OnInit {
   errorMessage = "";
   deleteschedulename = "";
   schedules = [];
-  show = false;
   courseinfo = [];
   temparray = [];
+  show = -1;
 
   constructor() { }
 
@@ -89,20 +89,36 @@ export class ScheduleComponent implements OnInit {
     this.schedules = this.temparray;
   }
 
-  viewCourseInfo(value: any){
-
-    //toggles div
-    this.show = !this.show;
+  viewCourseInfo(i: number){
     
-    const temporaryArray = [];
+    if (this.show === i){
+      this.show = -1;
+    }
+    else {
+      this.show = i;
+    }
 
-    fetch (`http://localhost:3000/timetable/schedule/${value}`)
-    .then (res => {
-        res.json()
+    //clear array
+    this.courseinfo = [];
+
+    //if greater 3 means there is courses
+    if (this.schedules[i].length > 3){
+      for (var j = 3; j<this.schedules[i].length; j++ ){
+        const subjectname = this.schedules[i][j].SubjectCode;
+        const coursecode = this.schedules[i][j].CourseCode;
+
+        //fetch for data
+        fetch(`http://localhost:3000/timetable/${subjectname}/${coursecode}`) //fetch based on subject name and coursecode
+        .then (res => res.json())
         .then (data => {
-          temporaryArray.push(data);
+          this.courseinfo.push(data);
         })
-    })
-  }
 
+      }
+    }
+    else {
+      return;
+    }
+  }
+  
 }

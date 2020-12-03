@@ -18,9 +18,23 @@
                     <p> {{ element.SubjectCode }} {{ element.CourseCode }}</p>
                 </div>
             </div>
-            <button value="{{ schedule[0] }}" (click)="viewCourseInfo($event.target.value)">Click to View More</button>
-            <ng-container *ngIf="show">
-                <p>hi</p> 
+            <button (click)="viewCourseInfo(i)">Click to View More</button>
+            <ng-container *ngIf="show === i">
+                <div id="extrainfo" *ngFor="let element of courseinfo;">
+                    <h2>{{ element[i].subject }} {{ element[i].catalog_nbr }}</h2>
+                    <p>Class Name: {{ element[i].className }}</p>
+                    <p>Section: {{ element[i].course_info[0].class_section }}</p>
+                    <div id="{{ element[i].course_info[0].ssr_component }}">
+                        <p>Type: {{ element[i].course_info[0].ssr_component }}</p>
+                    </div>
+                    <p>Class number: {{ element[i].course_info[0].class_nbr }}</p>
+                    <p>Days: {{ element[i].course_info[0].days }}</p>
+                    <p>Starts At: {{ element[i].course_info[0].start_time }}</p>
+                    <p>Ends At: {{ element[i].course_info[0].end_time }}</p>
+                    <p>Restriction: {{ element[i].course_info[0].descr }}</p>
+                    <p>Status: {{ element[i].course_info[0].enrl_stat }}</p>
+                    <p>Facility: {{ element[i].course_info[0].facility_ID }}</p>
+                </div>
              </ng-container>
         </li>
     </ol>
