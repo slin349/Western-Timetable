@@ -209,7 +209,7 @@ router.route('/createschedule/:schedulename/:authorname?/:description?')
         if (!chkr){
             return res.status(404).send(`Special characters inputted! NOT ALLOWED!`);
         }
-        
+
         //if true sanitization returns true
         if (!chkr2){
             return res.status(404).send(`Special characters inputted! NOT ALLOWED!`);
@@ -253,6 +253,7 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
         const subjectcode = req.params.subjectcode;
         const coursecode = req.params.coursecode;
         const todayzDate = new Date();
+        const email = req.useremail.email;
 
         const modifyDate = (todayzDate.getMonth()+1) + "/" + todayzDate.getDate() + "/" + todayzDate.getFullYear() + " " + todayzDate.getHours() + ":" + todayzDate.getMinutes() + ":" + todayzDate.getSeconds();
         const todaysTime = Date.now();
@@ -275,6 +276,12 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
         }
         else if (!chkr3){
             return res.status(408).send(`${coursecode} is not allowed!`);
+        }
+
+        //check if user is owner of schedule
+        //if user tries to change someone elses cchedule
+        if (jsonFile[schedulename][3] != email){
+            return res.status(400).send('Schedule does not belong to you!')
         }
 
         //loop to check every element in array

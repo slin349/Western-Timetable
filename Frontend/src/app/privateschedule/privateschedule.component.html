@@ -15,8 +15,22 @@
     <span class="buttonspan">
         <button id="schedulenamesubmit" (click)="createSchedule()">Create Schedule</button>
     </span>
-    <h3> {{errorMessage}}</h3>
+    <span> {{ scheduleerrorMessage }}</span>
 </div>
+<br>
+<div id="addtoSched">
+    <label for="schedulename" >Enter Schedule Name: </label>
+    <input type="text" id="schedulebox" maxlength="15" (change)="updateSchedule2Name($event.target.value)">
+    <label for="subject" >Enter Subject: </label>
+    <input type="text" id="subjectBox" maxlength="15" (change)="updateSubjectName($event.target.value)">
+    <label for="coursecode">Enter Coursecode: </label>
+    <input type="text" id="coursecode" maxlength="20" (change)="updateCoursecode($event.target.value)">
+    <span class="buttonspan">
+        <button id="schedulenamesubmit" (click)="addToSchedule()">Add to Schedule</button>
+    </span>
+    <span>{{ courseErrorMessage }}</span>
+</div>
+<br>
 <div id="deleteschedule">
     <label for="deletesched" >Delete Schedule Name:</label>
     <input type="text" id="deletebox" maxlength="20" (change)="updatedeleteScheduleName($event.target.value)">
@@ -24,9 +38,10 @@
         <button id="deletebutton">Delete</button>
     </span>
 </div> 
-
+<br>
 <div>
     <button (click)="viewPrivateSchedules()">View Schedules</button>
+    <span>{{errorMessage}}</span>
 </div>
 
 <div id="schedulecontainer">

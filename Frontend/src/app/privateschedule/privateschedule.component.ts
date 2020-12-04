@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class PrivatescheduleComponent implements OnInit {
 
   schedulename = "";
-  errorMessage = "";
+  scheduleerrorMessage = "";
   deleteschedulename = "";
   schedules = [];
   courseinfo = [];
@@ -17,6 +17,11 @@ export class PrivatescheduleComponent implements OnInit {
   description = "";
   visibility = "";
   author = "";
+  courseErrorMessage = "";
+  errorMessage = ""
+  schedule2name = "";
+  subject = "";
+  coursecode = "";
 
   constructor() { }
 
@@ -41,6 +46,18 @@ export class PrivatescheduleComponent implements OnInit {
   
   updateAuthorName(author: string){
     this.author = author;
+  }
+
+  updateSchedule2Name(schedulename: string) {
+    this.schedule2name=schedulename;
+  }
+
+  updateSubjectName(subject: string){
+    this.subject = subject;
+  }
+
+  updateCoursecode(coursecode: string){
+    this.coursecode = coursecode;
   }
 
   viewPrivateSchedules(){
@@ -119,7 +136,7 @@ export class PrivatescheduleComponent implements OnInit {
   }
 
   createSchedule() {
-    this.errorMessage = "";
+    this.scheduleerrorMessage = "";
     const schedulename = this.schedulename;
     const author = this.author;
     const description = this.description;
@@ -127,17 +144,17 @@ export class PrivatescheduleComponent implements OnInit {
 
     //if schedule name is left blank
     if (schedulename == ""){
-      return this.errorMessage = "Schedule name must not be empty"
+      return this.scheduleerrorMessage = "Schedule name must not be empty"
     }
 
     //if author is left blank
     if (author == "") {
-      return this.errorMessage = "Author must not be left blank"
+      return this.scheduleerrorMessage = "Author must not be left blank"
     }
 
     //if visibility is not selected
     if (visibility == ""){
-      return this.errorMessage = "Select public or private";
+      return this.scheduleerrorMessage = "Select public or private";
     }
 
     //if public
@@ -155,7 +172,7 @@ export class PrivatescheduleComponent implements OnInit {
         }
       })
       .then (res => {
-        this.errorMessage = res;
+        this.scheduleerrorMessage = res;
       })
     }
 
@@ -174,8 +191,42 @@ export class PrivatescheduleComponent implements OnInit {
         }
       })
       .then (res => {
-        this.errorMessage = res;
+        this.scheduleerrorMessage = res;
       })
     }
+  }
+
+  addToSchedule(){
+    const schedulename = this.schedule2name;
+    const subject = this.subject;
+    const coursecode = this.coursecode;
+
+    //cant leave empty spaces
+    if (schedulename == ""){
+      return this.courseErrorMessage = "Schedule name can not be blank";
+    }
+    if (subject == ""){
+      return this.courseErrorMessage = "Subject can not be blank";
+    }
+    if (coursecode == ""){
+      return this.courseErrorMessage = "Coursecode name can not be blank";
+    }
+
+    //fetch for data
+    fetch(`http://localhost:3000/timetable/schedule/${schedulename}/${subject}/${coursecode}`, {
+      method: "PUT",
+      credentials: "include"
+    })
+    .then (res => {
+      if (res.ok){
+        return res.text();
+      }
+      else {
+        return res.text();
+      }
+    })
+    .then (res => {
+      this.courseErrorMessage = res;
+    })
   }
 }
