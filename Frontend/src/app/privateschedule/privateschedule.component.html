@@ -1,5 +1,6 @@
 <h1>Private Schedules</h1>
 
+<h2>Create Schedules</h2>
 <div id="createSched">
     <label for="schedulename" >Enter Schedule Name: </label>
     <input type="text" id="schedulenamebox" maxlength="15" (change)="updateScheduleName($event.target.value)">
@@ -17,7 +18,7 @@
     </span>
     <span> {{ scheduleerrorMessage }}</span>
 </div>
-<br>
+<h2>Add Courses</h2>
 <div id="addtoSched">
     <label for="schedulename" >Enter Schedule Name: </label>
     <input type="text" id="schedulebox" maxlength="15" (change)="updateSchedule2Name($event.target.value)">
@@ -30,7 +31,7 @@
     </span>
     <span>{{ courseErrorMessage }}</span>
 </div>
-<br>
+<h2>Delete Schedules</h2>
 <div id="deleteschedule">
     <label for="deletesched" >Delete Schedule Name:</label>
     <input type="text" id="deletebox" maxlength="20" (change)="updatedeleteScheduleName($event.target.value)">
@@ -48,12 +49,22 @@
     </ng-container>
     <span>{{ deleteMessage }}</span>
 </div> 
-<br>
+<h2>Change Visibility</h2>
+    <label for="scheduletochange" >Schedule Name:</label>
+    <input type="text" id="updatevisibility" maxlength="20" (change)="updatevisibilitySchedulename($event.target.value)">
+    <input type="radio" id="public" name="visibility" value="public" (click)="updatevisibilityValue($event.target.value)">
+    <label for="public">Public</label>
+    <input type="radio" id="private" name="visibility" value="private" (click)="updatevisibilityValue($event.target.value)">
+    <label for="private">Private</label>
+    <span class="buttonspan">
+        <button id="updatebutton" (click)="changeVisibility()">Update</button>
+    </span>
+    <span>{{ visibilityMessage }}</span>
 <div>
-    <button (click)="viewPrivateSchedules()">View Schedules</button>
-    <span>{{errorMessage}}</span>
-</div>
 
+<button (click)="viewPrivateSchedules()">View Schedules</button>
+<span>{{errorMessage}}</span>
+</div>
 <div id="schedulecontainer">
     <ol id="schedules">
         <li *ngFor="let schedule of schedules; let i=index">

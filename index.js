@@ -919,10 +919,27 @@ app.get('/admin/auth', authToken, (req, res) => {
 
     //check if user is admin
     if (userFile[email][0] === "admin"){
-        res.status(200).send('You are admin');
+        return res.status(200).send('You are admin');
     }
 
     res.status(404).send('You are not admin');
+})
+
+//get all users
+app.get('/admin/allusers', authToken, (req, res) => {
+
+    list = [];
+
+    //check if user is admin
+    if (userFile[email][0] !== "admin"){
+        return res.status(404).send('You are not admin!');
+    }
+
+    
+})
+//give other users admin
+app.put('/admin/grant/access', authToken, (req, res) => {
+
 })
 
 //middleware to authenticate json web token

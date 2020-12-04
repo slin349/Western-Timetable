@@ -1,3 +1,9 @@
 <br>
-<h2>You are not admin!</h2>
-<button>View Admin Powers</button>
+<h2>{{ statusMessage }}</h2>
+<button (click)="checkAdmin()">View Admin Powers</button>
+
+<ng-container *ngIf="showAdmin">
+    <div>
+        hi
+    </div>
+</ng-container>

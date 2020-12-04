@@ -24,6 +24,9 @@ export class PrivatescheduleComponent implements OnInit {
   coursecode = "";
   displayButton = false;
   deleteMessage = "";
+  visibilityschedulename = "";
+  visibilityupdate = "";
+  visibilityMessage = "";
 
   constructor() { }
 
@@ -60,6 +63,14 @@ export class PrivatescheduleComponent implements OnInit {
 
   updateCoursecode(coursecode: string){
     this.coursecode = coursecode;
+  }
+
+  updatevisibilitySchedulename(visibilityschedulename: string){
+    this.visibilityschedulename = visibilityschedulename;
+  }
+
+  updatevisibilityValue(value: string){
+    this.visibilityupdate = value;
   }
 
   viewPrivateSchedules(){
@@ -279,5 +290,60 @@ export class PrivatescheduleComponent implements OnInit {
 
   buttonNo(){
     this.displayButton = !this.displayButton;
+  }
+
+  changeVisibility(){
+    const schedulename = this.visibilityschedulename;
+    const visibility = this.visibilityupdate;
+
+    //if schedule name is empty
+    if (schedulename == ""){
+      return this.visibilityMessage = "Schedule name can not be blank!"
+    }
+
+    //check if visibility is selected
+    if (visibility == ""){
+      return this.visibilityMessage = "Please choose public or private"
+    }
+
+    //if public
+    if (visibility == "public"){
+      fetch(`http://localhost:3000/privateschedule/change/public/${schedulename}`, {
+        method: "POST",
+        credentials: "include"
+      })
+      .then (res => {
+        if (res.ok){
+          return res.text();
+        }
+        else {
+          return res.text();
+        }
+      })
+      .then (res => {
+        this.visibilityMessage = res;
+      })
+    }
+
+    //if private
+    if (visibility == "private"){
+      fetch(`http://localhost:3000/privateschedule/change/private/${schedulename}`, {
+        method: "POST",
+        credentials: "include"
+      })
+      .then (res => {
+        if (res.ok){
+          return res.text();
+        }
+        else {
+          return res.text();
+        }
+      })
+      .then (res => {
+        this.visibilityMessage = res;
+      })
+    }
+
+    
   }
 }
