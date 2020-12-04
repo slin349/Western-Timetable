@@ -913,9 +913,16 @@ app.post('/privateschedule/change/private/:schedulename', authToken, (req, res) 
          })
 })
 
-//check if user is authenticated
-app.get('/authenticated', authToken, (req,res) => {
-    res.status(200).send("Authenticated");
+//check if user is admin
+app.get('/admin/auth', authToken, (req, res) => {
+    const email = req.useremail.email;
+
+    //check if user is admin
+    if (userFile[email][0] === "admin"){
+        res.status(200).send('You are admin');
+    }
+
+    res.status(404).send('You are not admin');
 })
 
 //middleware to authenticate json web token
