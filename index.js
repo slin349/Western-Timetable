@@ -591,8 +591,6 @@ app.post('/changepassword/:password', authToken, async (req, res) => {
     //hash the password
     const hashPass = await bcrypt.hash(newpass, 10);
 
-    console.log(userFile[`${email}`]);
-
     //change password
     userFile[`${email}`][1] = hashPass;
 
@@ -784,6 +782,108 @@ app.post('/privateschedules/create/:schedulename/:authorname?/:description?', au
         console.log(`Schedule name ${schedulename} is added.`);
         res.status(200).send(`Schedule name ${schedulename} is added.`);
     })
+})
+
+//view schedules for specific user
+app.get('/privateschedule/view', authToken, (req, res) => {
+    const email = req.useremail.email;
+
+    //list to store objects
+    var list = [];
+
+    //creates a new array that contains all the JSON objects
+    var x = (Object.entries(jsonFile));
+
+    //check for case of no schedules
+    if (x.length == 0) {
+        return res.status(404).send(`There are no schedules`);
+    }
+
+    
+    //itterate through array to find specific schedules that are from the user
+    for (i=0; i<x.length; i++){
+
+        //finds schedule name
+        if (x[i][1][3] == email){
+            list.push(x[i]);
+        }
+    }
+
+    res.send(list);
+})
+
+//set current users post to public
+app.post('/privateschedule/change/public/:schedulename', authToken, (req, res) => {
+    const email = req.useremail.email;
+    const schedulename = req.params.schedulename;
+
+    const chkr = sanitizeScheduleName(schedulename);
+
+    //if user tries to enter special characters
+    if (!chkr) {
+        return res.status(400).send('SPECIAL CHARACTERS ARE NOT ALLOWED!');
+    }
+
+    //look for the schedule name and see if it exists
+    if (jsonFile[schedulename] == undefined){
+        return res.status(400).send('Schedule does not exist');
+    }
+
+
+    //if user tries to change someone elses cchedule
+    if (jsonFile[schedulename][3] != email){
+        return res.status(400).send('Schedule does not belong to you!')
+    }
+
+     //change to public
+     jsonFile[schedulename][4] = true;
+
+     const data = JSON.stringify(jsonFile); //convert to JSON
+ 
+         //writing to JSON file
+         fs.writeFile('./data/schedule.json', data, (err) => {
+             if (err){
+                 throw err;
+             }
+             res.status(201).send(`Schedule changed to public`);
+         })
+})
+
+//set current users post to private
+app.post('/privateschedule/change/private/:schedulename', authToken, (req, res) => {
+    const email = req.useremail.email;
+    const schedulename = req.params.schedulename;
+
+    const chkr = sanitizeScheduleName(schedulename);
+
+    //if user tries to enter special characters
+    if (!chkr) {
+        return res.status(400).send('SPECIAL CHARACTERS ARE NOT ALLOWED!');
+    }
+
+    //look for the schedule name and see if it exists
+    if (jsonFile[schedulename] == undefined){
+        return res.status(400).send('Schedule does not exist');
+    }
+
+
+    //if user tries to change someone elses cchedule
+    if (jsonFile[schedulename][3] != email){
+        return res.status(400).send('Schedule does not belong to you!')
+    }
+
+     //change to public
+     jsonFile[schedulename][4] = false;
+
+     const data = JSON.stringify(jsonFile); //convert to JSON
+ 
+         //writing to JSON file
+         fs.writeFile('./data/schedule.json', data, (err) => {
+             if (err){
+                 throw err;
+             }
+             res.status(201).send(`Schedule changed to public`);
+         })
 })
 
 //middleware to authenticate json web token
