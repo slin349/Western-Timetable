@@ -59,7 +59,6 @@ export class ScheduleComponent implements OnInit {
             res.json()
             .then (data => {
                 data.forEach(element => {
-                    count ++;
 
                     //stop after 10 schedules
                     if (count > 10){
@@ -72,6 +71,7 @@ export class ScheduleComponent implements OnInit {
 
                           //if visibility is true
                           if (data[4] == true){
+                            count ++;
                             this.temparray.push(data);          
                             this.temparray.sort((a,b) => {
                             return b[6] - a[6];
@@ -94,7 +94,9 @@ export class ScheduleComponent implements OnInit {
   }
 
   viewCourseInfo(i: number){
-    
+    //clear array
+    this.courseinfo = [];
+
     if (this.show === i){
       this.show = -1;
     }
@@ -102,26 +104,23 @@ export class ScheduleComponent implements OnInit {
       this.show = i;
     }
 
-    //clear array
-    this.courseinfo = [];
-
-    //if greater 4 means there is courses
-    if (this.schedules[i].length > 7){
-      for (var j = 7; j<this.schedules[i].length; j++ ){
-        const subjectname = this.schedules[i][j].SubjectCode;
-        const coursecode = this.schedules[i][j].CourseCode;
-
-        //fetch for data
-        fetch(`http://localhost:3000/timetable/${subjectname}/${coursecode}`) //fetch based on subject name and coursecode
-        .then (res => res.json())
-        .then (data => {
-          this.courseinfo.push(data);
-        })
-
-      }
-    }
-    else {
+    //if no courses
+    if (this.schedules[i].length < 7){
       return;
+    }
+
+    //if greater 7 means there is courses
+    for (var j = 7; j<this.schedules[i].length; j++ ){
+      const subjectname = this.schedules[i][j].SubjectCode;
+      const coursecode = this.schedules[i][j].CourseCode;
+
+      //fetch for data
+      fetch(`http://localhost:3000/timetable/${subjectname}/${coursecode}`) //fetch based on subject name and coursecode
+      .then (res => res.json())
+      .then (data => {
+        this.courseinfo.push(data);
+      })
+
     }
   }
   
