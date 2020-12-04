@@ -17,7 +17,7 @@
                 <p>Modified On: {{ schedule[5] }} </p>
                 <div *ngFor="let element of schedule;">
                     <p> {{ element.SubjectCode }} {{ element.CourseCode }}</p>
-                 </div>
+                </div>
             </div>
             <button (click)="viewCourseInfo(i)">Click to View More</button>
             <div *ngFor="let element of courseinfo; let j=index">

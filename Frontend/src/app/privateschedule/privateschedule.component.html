@@ -1,5 +1,5 @@
 <h1>Private Schedules</h1>
-<span> {{statusMessage}}</span>
+<span> {{errorMessage}}</span>
 <div>
     <button (click)="viewPrivateSchedules()">View Schedules</button>
 </div>
@@ -8,14 +8,33 @@
     <ol id="schedules">
         <li *ngFor="let schedule of schedules; let i=index">
             <div>
-                <h2>Schedule: {{ schedule[i][0] }}</h2>
-                <p>Created by: {{ schedule[i][1][1] }}</p>
-                <p>Description: {{ schedule[i][1][2] }}</p>
-                <p>Number of Courses: {{ (schedule[i][1].length)-7 }}</p>
-                <p>Modified On: {{ schedule[i][1][5] }} </p>
+                <h2>Schedule: {{ schedule[0] }}</h2>
+                <p>Created by: {{ schedule[1] }}</p>
+                <p>Description: {{ schedule[2] }}</p>
+                <p>Number of Courses: {{ (schedule.length)-7 }}</p>
+                <p>Modified On: {{ schedule[5] }} </p>
+                <div *ngFor="let element of schedule;">
+                    <p> {{ element.SubjectCode }} {{ element.CourseCode }}</p>
+                </div>
             </div>
             <button (click)="viewCourseInfo(i)">Click to View More</button>
-            
+            <div *ngFor="let element of courseinfo; let j=index">
+                <ng-container id="extrainfo" *ngIf="show === i">
+                    <h2>{{ element[0].subject }} {{ element[0].catalog_nbr }}</h2>
+                    <p>Class Name: {{ element[0].className }}</p>
+                    <p>Section: {{ element[0].course_info[0].class_section }}</p>
+                    <div id="{{ element[0].course_info[0].ssr_component }}">
+                        <p>Type: {{ element[0].course_info[0].ssr_component }}</p>
+                    </div>
+                    <p>Class number: {{ element[0].course_info[0].class_nbr }}</p>
+                    <p>Days: {{ element[0].course_info[0].days }}</p>
+                    <p>Starts At: {{ element[0].course_info[0].start_time }}</p>
+                    <p>Ends At: {{ element[0].course_info[0].end_time }}</p>
+                    <p>Restriction: {{ element[0].course_info[0].descr }}</p>
+                    <p>Status: {{ element[0].course_info[0].enrl_stat }}</p>
+                    <p>Facility: {{ element[0].course_info[0].facility_ID }}</p>
+                </ng-container>
+            </div>
         </li>
     </ol>
     

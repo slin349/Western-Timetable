@@ -805,11 +805,22 @@ app.get('/privateschedule/view', authToken, (req, res) => {
 
         //finds schedule name
         if (x[i][1][3] == email){
-            list.push(x[i]);
+            //finds schedule name
+            schedulename = x[i][0];
+            //using schedule name determine number of courses through keys
+            numofcourses = (Object.keys(jsonFile[schedulename]).length)-3;
+            //create object
+            tempobj = {
+                "ScheduleName": schedulename,
+                "NumberofCourses": numofcourses
+            }
+            //push object
+            list.push(tempobj);
         }
     }
 
     res.send(list);
+
 })
 
 //set current users post to public
