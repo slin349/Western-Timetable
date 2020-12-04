@@ -790,6 +790,23 @@ app.post('/privateschedules/create/:schedulename/:authorname?/:description?', au
         return res.status(409).send(`Schedule name ${schedulename} exists!`);
     }
 
+    //check if there are already 20 schedules
+    var list = [];
+
+    //creates a new array that contains all the JSON objects
+    var x = (Object.entries(jsonFile));
+
+    for (i=0; i<x.length; i++){
+        if (x[i][1][3] == email){
+            list.push(x[i]);
+        }
+    }
+
+    //if there are already 20 schedules
+    if (list.length >= 20){
+        return res.status(400).send('Schedule limit is 20: LIMIT REACHED');
+    }
+
     jsonFile[schedulename] = [schedulename, author, description, email, isPublic, todaysDate, todaysValue]; //this includes the data to the file however does not save it
     const data = JSON.stringify(jsonFile); //convert to JSON
 
