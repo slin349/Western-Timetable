@@ -918,7 +918,7 @@ app.get('/admin/auth', authToken, (req, res) => {
     const email = req.useremail.email;
 
     //check if user is admin
-    if (userFile[email][0] === "admin"){
+    if (userFile[email][4] === "true"){
         return res.status(200).send('You are admin');
     }
 
@@ -927,16 +927,38 @@ app.get('/admin/auth', authToken, (req, res) => {
 
 //get all users
 app.get('/admin/allusers', authToken, (req, res) => {
+    const email = req.useremail.email;
 
     list = [];
 
     //check if user is admin
-    if (userFile[email][0] !== "admin"){
+    if (userFile[email][4] !== "true"){
         return res.status(404).send('You are not admin!');
     }
 
-    
+    //creates a new array that contains all the JSON objects
+    var x = (Object.entries(userFile));
+
+    x.forEach(users => {
+        const emailz = users[0];
+        const userName = users[1][0]
+        const disabled = users[1][2]
+        const isAdmin = users[1][4]
+
+        const tempobj = {
+            Email: emailz,
+            Username: userName,
+            Disabled: disabled,
+            Admin: isAdmin
+        }
+
+        list.push(tempobj);
+    })
+
+    res.send(list);
+
 })
+
 //give other users admin
 app.put('/admin/grant/access', authToken, (req, res) => {
 

@@ -2,8 +2,13 @@
 <h2>{{ statusMessage }}</h2>
 <button (click)="checkAdmin()">View Admin Powers</button>
 
+<br>
 <ng-container *ngIf="showAdmin">
-    <div>
-        hi
+    <button (click)="viewUsers()">View All Users</button>
+    <div *ngFor="let user of users; let i = index">
+        <h2>All Users</h2>
+        <div *ngFor="let element of user">
+            <p>Email: {{ element.Email }} Username: {{ element.Username }} Disabled: {{ element.Disabled}} Admin: {{ element.Admin }}</p>
+        </div>
     </div>
 </ng-container>

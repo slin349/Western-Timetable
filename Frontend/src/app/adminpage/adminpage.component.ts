@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class AdminpageComponent implements OnInit {
   statusMessage = "";
   showAdmin = false;
+  users = [];
 
   constructor() { }
 
@@ -15,6 +16,7 @@ export class AdminpageComponent implements OnInit {
   }
 
   checkAdmin(){
+    //fetch to see if admin
     fetch('http://localhost:3000/admin/auth', {
       method: "GET",
       credentials: "include"
@@ -31,5 +33,31 @@ export class AdminpageComponent implements OnInit {
     .then (res => {
       this.statusMessage = res;
     })
+  }
+
+  viewUsers(){
+    var temparray = [];
+
+    //fetch
+    fetch('http://localhost:3000/admin/allusers', {
+      method: "GET",
+      credentials: "include"
+    })
+    .then (res => {
+      if (res.ok){
+        res.json()
+        .then (data => {
+          temparray.push(data);
+        })
+      }
+      else {
+        return res.text()
+      }
+    })
+    .then (res => {
+      this.statusMessage = res;
+    })
+
+    this.users = temparray;
   }
 }
