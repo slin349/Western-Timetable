@@ -35,8 +35,18 @@
     <label for="deletesched" >Delete Schedule Name:</label>
     <input type="text" id="deletebox" maxlength="20" (change)="updatedeleteScheduleName($event.target.value)">
     <span class="buttonspan">
-        <button id="deletebutton">Delete</button>
+        <button id="deletebutton" (click)="toggleButtonDiv()">Delete</button>
     </span>
+    <ng-container *ngIf="displayButton">
+        <h2>Please confirm you want to delete schedule: {{ deleteschedulename }}</h2>
+        <span class="buttonspan">
+            <button id="deletebutton" (click)="buttonYes()">Yes</button>
+        </span>
+        <span class="buttonspan">
+            <button id="deletebutton" (click)="buttonNo()">No</button>
+        </span>
+    </ng-container>
+    <span>{{ deleteMessage }}</span>
 </div> 
 <br>
 <div>

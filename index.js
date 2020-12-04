@@ -146,32 +146,6 @@ router.route('/schedule_all')
         res.send(list);
     })
 
-    .delete ((req, res) => {
-        //creates a new array that contains all the JSON objects
-        var x = (Object.entries(jsonFile));
-
-        //if no schedules exist
-        if (x.length == 0) {
-            return res.send(`There are no schedules to delete`)
-        }
-
-        //loop and delete schedules
-        for (i=0; i<x.length; i++){
-            schedulename = x[i][0];
-            delete jsonFile[schedulename];
-        }
-
-        const data = JSON.stringify(jsonFile);
-
-        //writing to JSON file
-        fs.writeFile('./data/schedule.json', data, (err) => {
-            if (err){
-                throw err;
-            }
-        })   
-        return res.send(`Deleted all schedules`);
-    })
-
 
 //route for creating public schedules
 router.route('/createschedule/:schedulename/:authorname?/:description?')
@@ -353,7 +327,8 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
     //delete specific schedule given name
     .delete (authToken, (req, res) => {
         const schedulename = req.params.schedulename;
-
+        const email = req.useremail.email;
+        
         //sanitize
         var chkr = sanitizeScheduleName(schedulename);
 
@@ -365,7 +340,12 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
         if (jsonFile[schedulename] == undefined) {
             return res.status(409).send(`Schedule name ${schedulename} does not exist!`);
         }
-        
+
+        //check if schedule is owned by person
+        if (jsonFile[schedulename][3] != email){
+            return res.status(400).send('Schedule not owned by you. Can not delete!');
+        }
+
         //deletes it from JSON file
         delete jsonFile[schedulename];
 
@@ -378,7 +358,7 @@ router.route('/schedule/:schedulename/:subjectcode?/:coursecode?')
             }
             console.log(`Deleted ${schedulename} from database`);
         })   
-        return res.send(`Deleted ${schedulename} from schedule`);
+        return res.status(200).send(`Deleted ${schedulename} from schedule`);
     })
 
 //when user enters specific subject id

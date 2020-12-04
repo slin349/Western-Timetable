@@ -22,6 +22,8 @@ export class PrivatescheduleComponent implements OnInit {
   schedule2name = "";
   subject = "";
   coursecode = "";
+  displayButton = false;
+  deleteMessage = "";
 
   constructor() { }
 
@@ -194,6 +196,9 @@ export class PrivatescheduleComponent implements OnInit {
         this.scheduleerrorMessage = res;
       })
     }
+
+    //redisplay schedules
+    this.viewPrivateSchedules();
   }
 
   addToSchedule(){
@@ -228,5 +233,51 @@ export class PrivatescheduleComponent implements OnInit {
     .then (res => {
       this.courseErrorMessage = res;
     })
+
+    //redisplay schedule
+    this.viewPrivateSchedules();
+  }
+
+  toggleButtonDiv(){
+    this.displayButton = !this.displayButton;
+    this.deleteMessage = "";
+  }
+
+  buttonYes(){
+    //toggle the div
+    this.displayButton = !this.displayButton;
+    const schedulename = this.deleteschedulename;
+
+    //if user inputs empty
+    if (schedulename == ""){
+      return this.deleteMessage= 'Schedule name can not be blank';
+    }
+    
+    //fetch for data
+    fetch (`http://localhost:3000/timetable/schedule/${schedulename}`, {
+      method: "DELETE",
+      credentials: "include"
+    })
+    .then (res => {
+      if (res.ok){
+        console.log("hi");
+        console.log(res);
+        return res.text();
+      }
+      else {
+        console.log("bye");
+        console.log(res);
+        return res.text();
+      }
+    })
+    .then (res => {
+      this.deleteMessage = res;
+    })
+    //redisplay schedules
+    this.viewPrivateSchedules();
+  }
+
+  buttonNo(){
+    this.displayButton = !this.displayButton;
   }
 }

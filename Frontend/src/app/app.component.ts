@@ -16,8 +16,5 @@ export class AppComponent {
       method: 'POST',
       credentials: "include"
     })
-    .then (res => {
-      console.log('User logged out');
-    })
   }
 }
