@@ -1,0 +1,22 @@
+<h1>Private Schedules</h1>
+<span> {{statusMessage}}</span>
+<div>
+    <button (click)="viewPrivateSchedules()">View Schedules</button>
+</div>
+
+<div id="schedulecontainer">
+    <ol id="schedules">
+        <li *ngFor="let schedule of schedules; let i=index">
+            <div>
+                <h2>Schedule: {{ schedule[i][0] }}</h2>
+                <p>Created by: {{ schedule[i][1][1] }}</p>
+                <p>Description: {{ schedule[i][1][2] }}</p>
+                <p>Number of Courses: {{ (schedule[i][1].length)-7 }}</p>
+                <p>Modified On: {{ schedule[i][1][5] }} </p>
+            </div>
+            <button (click)="viewCourseInfo(i)">Click to View More</button>
+            
+        </li>
+    </ol>
+    
+</div>

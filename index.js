@@ -882,8 +882,13 @@ app.post('/privateschedule/change/private/:schedulename', authToken, (req, res) 
              if (err){
                  throw err;
              }
-             res.status(201).send(`Schedule changed to public`);
+             res.status(201).send(`Schedule changed to private`);
          })
+})
+
+//check if user is authenticated
+app.get('/authenticated', authToken, (req,res) => {
+    res.status(200).send("Authenticated");
 })
 
 //middleware to authenticate json web token
