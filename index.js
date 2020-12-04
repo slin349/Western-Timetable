@@ -192,6 +192,8 @@ router.route('/createschedule/:schedulename/:authorname?/:description?')
 
         var chkr = sanitizeScheduleName(schedulename);
         var authorchkr = sanitizeScheduleName(author);
+        var chkr2 = sanitizeScheduleName(author);
+        var chkr3 = sanitizeScheduleName(description);
 
         //check if author is left empty
         if (author == undefined){
@@ -205,6 +207,16 @@ router.route('/createschedule/:schedulename/:authorname?/:description?')
 
         //if true sanitization returns true
         if (!chkr){
+            return res.status(404).send(`Special characters inputted! NOT ALLOWED!`);
+        }
+        
+        //if true sanitization returns true
+        if (!chkr2){
+            return res.status(404).send(`Special characters inputted! NOT ALLOWED!`);
+        }
+
+        //if true sanitization returns true
+        if (!chkr3){
             return res.status(404).send(`Special characters inputted! NOT ALLOWED!`);
         }
 

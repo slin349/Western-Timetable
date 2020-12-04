@@ -1,5 +1,30 @@
 <h1>Private Schedules</h1>
-<span> {{errorMessage}}</span>
+
+<div id="createSched">
+    <label for="schedulename" >Enter Schedule Name: </label>
+    <input type="text" id="schedulenamebox" maxlength="15" (change)="updateScheduleName($event.target.value)">
+    <label for="authorname" >Enter Author Name: </label>
+    <input type="text" id="authornamebox" maxlength="15" (change)="updateAuthorName($event.target.value)">
+    <label for="description">Description: </label>
+    <input type="text" id="descriptionbox" maxlength="20" (change)="updateDescription($event.target.value)">
+    <br>
+    <input type="radio" id="public" name="visibility" value="public" (click)="updateVisibility($event.target.value)">
+    <label for="public">Public</label><br>
+    <input type="radio" id="private" name="visibility" value="private" (click)="updateVisibility($event.target.value)">
+    <label for="private">Private</label><br>
+    <span class="buttonspan">
+        <button id="schedulenamesubmit" (click)="createSchedule()">Create Schedule</button>
+    </span>
+    <h3> {{errorMessage}}</h3>
+</div>
+<div id="deleteschedule">
+    <label for="deletesched" >Delete Schedule Name:</label>
+    <input type="text" id="deletebox" maxlength="20" (change)="updatedeleteScheduleName($event.target.value)">
+    <span class="buttonspan">
+        <button id="deletebutton">Delete</button>
+    </span>
+</div> 
+
 <div>
     <button (click)="viewPrivateSchedules()">View Schedules</button>
 </div>
@@ -12,6 +37,7 @@
                 <p>Created by: {{ schedule[1] }}</p>
                 <p>Description: {{ schedule[2] }}</p>
                 <p>Number of Courses: {{ (schedule.length)-7 }}</p>
+                <p>Visible to Public: {{ schedule[4] }}</p>
                 <p>Modified On: {{ schedule[5] }} </p>
                 <div *ngFor="let element of schedule;">
                     <p> {{ element.SubjectCode }} {{ element.CourseCode }}</p>

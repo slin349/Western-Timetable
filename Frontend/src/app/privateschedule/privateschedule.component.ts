@@ -14,12 +14,34 @@ export class PrivatescheduleComponent implements OnInit {
   courseinfo = [];
   show = -1;
   temparray = [];
+  description = "";
+  visibility = "";
+  author = "";
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
+  updateScheduleName(schedname: string){
+    this.schedulename = schedname;
+  }
+
+  updatedeleteScheduleName(schedname: string){
+    this.deleteschedulename = schedname;
+  }
+
+  updateDescription(description: string){
+    this.description = description;
+  }
+
+  updateVisibility(visibility: string) {
+    this.visibility = visibility;
+  }
+  
+  updateAuthorName(author: string){
+    this.author = author;
+  }
 
   viewPrivateSchedules(){
     //clears schedules
@@ -95,5 +117,65 @@ export class PrivatescheduleComponent implements OnInit {
       this.show = i;
     }
   }
-  
+
+  createSchedule() {
+    this.errorMessage = "";
+    const schedulename = this.schedulename;
+    const author = this.author;
+    const description = this.description;
+    const visibility = this.visibility;
+
+    //if schedule name is left blank
+    if (schedulename == ""){
+      return this.errorMessage = "Schedule name must not be empty"
+    }
+
+    //if author is left blank
+    if (author == "") {
+      return this.errorMessage = "Author must not be left blank"
+    }
+
+    //if visibility is not selected
+    if (visibility == ""){
+      return this.errorMessage = "Select public or private";
+    }
+
+    //if public
+    if (visibility == "public"){
+      fetch(`http://localhost:3000/timetable/createschedule/${schedulename}/${author}/${description}`, {
+        method: "POST",
+        credentials: "include"
+      })
+      .then (res => {
+        if (res.ok){
+          return res.text();
+        }
+        else {
+          return res.text();
+        }
+      })
+      .then (res => {
+        this.errorMessage = res;
+      })
+    }
+
+    //if private
+    if (visibility == "private"){
+      fetch(`http://localhost:3000/privateschedules/create/${schedulename}/${author}/${description}`, {
+        method: "POST",
+        credentials: "include"
+      })
+      .then (res => {
+        if (res.ok){
+          return res.text();
+        }
+        else {
+          return res.text();
+        }
+      })
+      .then (res => {
+        this.errorMessage = res;
+      })
+    }
+  }
 }
