@@ -17,26 +17,26 @@
                 <p>Modified On: {{ schedule[5] }} </p>
                 <div *ngFor="let element of schedule;">
                     <p> {{ element.SubjectCode }} {{ element.CourseCode }}</p>
-                </div>
+                 </div>
             </div>
             <button (click)="viewCourseInfo(i)">Click to View More</button>
-            <ng-container *ngIf="show === i">
-                <div id="extrainfo" *ngFor="let element of courseinfo;">
-                    <h2>{{ element[i].subject }} {{ element[i].catalog_nbr }}</h2>
-                    <p>Class Name: {{ element[i].className }}</p>
-                    <p>Section: {{ element[i].course_info[0].class_section }}</p>
-                    <div id="{{ element[i].course_info[0].ssr_component }}">
-                        <p>Type: {{ element[i].course_info[0].ssr_component }}</p>
+            <div *ngFor="let element of courseinfo; let j=index">
+                <ng-container id="extrainfo" *ngIf="show === i">
+                    <h2>{{ element[0].subject }} {{ element[0].catalog_nbr }}</h2>
+                    <p>Class Name: {{ element[0].className }}</p>
+                    <p>Section: {{ element[0].course_info[0].class_section }}</p>
+                    <div id="{{ element[0].course_info[0].ssr_component }}">
+                        <p>Type: {{ element[0].course_info[0].ssr_component }}</p>
                     </div>
-                    <p>Class number: {{ element[i].course_info[0].class_nbr }}</p>
-                    <p>Days: {{ element[i].course_info[0].days }}</p>
-                    <p>Starts At: {{ element[i].course_info[0].start_time }}</p>
-                    <p>Ends At: {{ element[i].course_info[0].end_time }}</p>
-                    <p>Restriction: {{ element[i].course_info[0].descr }}</p>
-                    <p>Status: {{ element[i].course_info[0].enrl_stat }}</p>
-                    <p>Facility: {{ element[i].course_info[0].facility_ID }}</p>
-                </div>
-             </ng-container>
+                    <p>Class number: {{ element[0].course_info[0].class_nbr }}</p>
+                    <p>Days: {{ element[0].course_info[0].days }}</p>
+                    <p>Starts At: {{ element[0].course_info[0].start_time }}</p>
+                    <p>Ends At: {{ element[0].course_info[0].end_time }}</p>
+                    <p>Restriction: {{ element[0].course_info[0].descr }}</p>
+                    <p>Status: {{ element[0].course_info[0].enrl_stat }}</p>
+                    <p>Facility: {{ element[0].course_info[0].facility_ID }}</p>
+                </ng-container>
+            </div>
         </li>
     </ol>
     
