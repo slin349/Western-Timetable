@@ -1,10 +1,21 @@
-<br>
 <h2>{{ statusMessage }}</h2>
 <button (click)="checkAdmin()">View Admin Powers</button>
 
 <br>
 <ng-container *ngIf="showAdmin">
     <button (click)="viewUsers()">View All Users</button>
+    <h2>Grant Admin or Enable/Disable Account</h2>
+    <label>Enter User Email</label>
+    <input type="text" id="useremail" maxlength="20" (change)="updateEmail($event.target.value)">
+    <input type="radio" id="enable" name="modify" value="enable" (click)="updateAction($event.target.value)">
+    <label for="public">Enable</label>
+    <input type="radio" id="disable" name="modify" value="disable" (click)="updateAction($event.target.value)">
+    <label for="private">Disable</label>
+    <span class="buttonspan">
+        <button id="admin" (click)="giveAdmin()">Grant Admin</button>
+        <button id="modify" (click)="modifyUser()">Modify</button>
+    </span>
+    <span>{{ errorMessage }}</span>
     <div *ngFor="let user of users; let i = index">
         <h2>All Users</h2>
         <div *ngFor="let element of user">

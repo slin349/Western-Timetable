@@ -9,10 +9,21 @@ export class AdminpageComponent implements OnInit {
   statusMessage = "";
   showAdmin = false;
   users = [];
+  grantAdminEmail = "";
+  enabledOrdisabled = "";
+  errorMessage = "";
 
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  updateEmail(email: string){
+    this.grantAdminEmail = email;
+  }
+
+  updateAction(value: string){
+    this.enabledOrdisabled = value;
   }
 
   checkAdmin(){
@@ -36,8 +47,8 @@ export class AdminpageComponent implements OnInit {
   }
 
   viewUsers(){
+    this.users = [];
     var temparray = [];
-
     //fetch
     fetch('http://localhost:3000/admin/allusers', {
       method: "GET",
@@ -59,5 +70,92 @@ export class AdminpageComponent implements OnInit {
     })
 
     this.users = temparray;
+  }
+
+  giveAdmin(){
+    const useremail = this.grantAdminEmail;
+
+    //if input is empty
+    if (useremail == ""){
+      return this.errorMessage = "Must enter user's email"
+    }
+
+    fetch(`http://localhost:3000/admin/grant/access/${useremail}`, {
+      method: "PUT",
+      credentials: "include"
+    })
+    .then (res => {
+      if (res.ok){
+        return res.text()
+      }
+      else {
+        return res.text()
+      }
+    })
+    .then (res => {
+      this.errorMessage = res;
+    })
+
+    //refresh
+    this.viewUsers();
+  }
+
+  modifyUser(){
+    const useremail = this.grantAdminEmail;
+    const enabledOrdisabled = this.enabledOrdisabled;
+
+    //if input is empty
+    if (useremail == ""){
+      return this.errorMessage = "Must enter user's email"
+    }
+
+    //make sure they select
+    if (enabledOrdisabled == ""){
+      return this.errorMessage = "Must select enable or disable"
+    }
+
+    //fetch for enabling
+    if (enabledOrdisabled == "enable"){
+      fetch(`http://localhost:3000/admin/enable/${useremail}`, {
+        method: "POST",
+        credentials: "include"
+      })
+      .then (res => {
+        if (res.ok){
+          return res.text()
+        }
+        else {
+          return res.text()
+        }
+      })
+      .then (res => {
+        this.errorMessage = res;
+      })
+
+      //refresh
+      this.viewUsers();
+    }
+
+    //fetch for disabling
+    if (enabledOrdisabled == "disable"){
+      fetch(`http://localhost:3000/admin/disable/${useremail}`, {
+        method: "POST",
+        credentials: "include"
+      })
+      .then (res => {
+        if (res.ok){
+          return res.text()
+        }
+        else {
+          return res.text()
+        }
+      })
+      .then (res => {
+        this.errorMessage = res;
+      })
+
+      //refresh
+      this.viewUsers();
+    }
   }
 }
