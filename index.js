@@ -634,48 +634,6 @@ app.get('/users/reverify/:email', (req, res) => {
     res.status(201).send(`http://localhost:3000/users/login/${email}`);
 })
 
-//disabling account
-app.post('/admin/disable', (req, res) => {
-    const email = req.body.email;
-
-    //change to true for disabling an account
-    userFile[`${email}`][2] = "true";
-
-    //write to file
-    const data = JSON.stringify(userFile);
-
-    //writing to JSON file
-    fs.writeFile('./data/users.json', data, (err) => {
-        if (err){
-            throw err;
-        }
-        console.log(`${email} is disabled!`);
-    })
-    
-    res.send(`${email} is disabled!`);
-})
-
-//enabling account
-app.post('/admin/enable', (req, res) => {
-    const email = req.body.email;
-
-    //change to true for disabling an account
-    userFile[`${email}`][2] = "false";
-
-    //write to file
-    const data = JSON.stringify(userFile);
-
-    //writing to JSON file
-    fs.writeFile('./data/users.json', data, (err) => {
-        if (err){
-            throw err;
-        }
-        console.log(`${email} is enabled!`);
-    })
-    
-    res.send(`${email} is enabled!`);
-})
-
 //logging out user
 app.post('/users/logout', (req, res) => {
     //clear cookie
@@ -960,10 +918,86 @@ app.get('/admin/allusers', authToken, (req, res) => {
 })
 
 //give other users admin
-app.put('/admin/grant/access', authToken, (req, res) => {
+app.put('/admin/grant/access/:name', authToken, (req, res) => {
+    const email = req.useremail.email;
+    const usersemail = req.params.name;
+
+
+    //check if useremail exists
+    if (userFile[usersemail] == undefined){
+        return res.status(404).send("Email does not exist");
+    }
+
+    //if check if not admin
+    //check if user is admin
+    if (userFile[email][4] !== "true"){
+        return res.status(404).send('You are not admin!');
+    }
+
+    //check if useremail is empty
+    if (usersemail == ""){
+        return res.status(404).send('Must input user email to promote to admin');
+    }
+
+    //change value to true meaning user is now admin
+    userFile[usersemail][4] = "true";
+
+    //write to file
+    const data = JSON.stringify(userFile);
+
+    //writing to JSON file
+    fs.writeFile('./data/users.json', data, (err) => {
+        if (err){
+            throw err;
+        }
+        console.log(`${usersemail} is admin!`);
+    })
+    
+    res.send(`${usersemail} is now admin!`);
 
 })
 
+//disabling account
+app.post('/admin/disable', (req, res) => {
+    const email = req.body.email;
+
+    //change to true for disabling an account
+    userFile[`${email}`][2] = "true";
+
+    //write to file
+    const data = JSON.stringify(userFile);
+
+    //writing to JSON file
+    fs.writeFile('./data/users.json', data, (err) => {
+        if (err){
+            throw err;
+        }
+        console.log(`${email} is disabled!`);
+    })
+    
+    res.send(`${email} is disabled!`);
+})
+
+//enabling account
+app.post('/admin/enable', (req, res) => {
+    const email = req.body.email;
+
+    //change to true for disabling an account
+    userFile[`${email}`][2] = "false";
+
+    //write to file
+    const data = JSON.stringify(userFile);
+
+    //writing to JSON file
+    fs.writeFile('./data/users.json', data, (err) => {
+        if (err){
+            throw err;
+        }
+        console.log(`${email} is enabled!`);
+    })
+    
+    res.send(`${email} is enabled!`);
+})
 //middleware to authenticate json web token
 function authToken(req, res, next) {
     const userauthtoken = req.cookies.useraccesstoken;
