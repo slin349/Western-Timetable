@@ -958,11 +958,28 @@ app.put('/admin/grant/access/:name', authToken, (req, res) => {
 })
 
 //disabling account
-app.post('/admin/disable', (req, res) => {
-    const email = req.body.email;
+app.post('/admin/disable/:email', authToken, (req, res) => {
+    const email = req.useremail.email;
+    const usersemail = req.params.email;
+
+    //check if useremail exists
+    if (userFile[usersemail] == undefined){
+        return res.status(404).send("Email does not exist");
+    }
+
+    //if check if not admin
+    //check if user is admin
+    if (userFile[email][4] !== "true"){
+        return res.status(404).send('You are not admin!');
+    }
+
+    //check if useremail is empty
+    if (usersemail == ""){
+        return res.status(404).send('Must input user email to promote to admin');
+    }
 
     //change to true for disabling an account
-    userFile[`${email}`][2] = "true";
+    userFile[`${usersemail}`][2] = "true";
 
     //write to file
     const data = JSON.stringify(userFile);
@@ -972,18 +989,35 @@ app.post('/admin/disable', (req, res) => {
         if (err){
             throw err;
         }
-        console.log(`${email} is disabled!`);
+        console.log(`${usersemail} is disabled!`);
     })
     
-    res.send(`${email} is disabled!`);
+    res.send(`${usersemail} is disabled!`);
 })
 
 //enabling account
-app.post('/admin/enable', (req, res) => {
-    const email = req.body.email;
+app.post('/admin/enable/:email', authToken, (req, res) => {
+    const email = req.useremail.email;
+    const usersemail = req.params.email;
 
-    //change to true for disabling an account
-    userFile[`${email}`][2] = "false";
+    //check if useremail exists
+    if (userFile[usersemail] == undefined){
+        return res.status(404).send("Email does not exist");
+    }
+
+    //if check if not admin
+    //check if user is admin
+    if (userFile[email][4] !== "true"){
+        return res.status(404).send('You are not admin!');
+    }
+
+    //check if useremail is empty
+    if (usersemail == ""){
+        return res.status(404).send('Must input user email to promote to admin');
+    }
+
+    //change to true for enabling an account
+    userFile[`${usersemail}`][2] = "false";
 
     //write to file
     const data = JSON.stringify(userFile);
@@ -993,11 +1027,12 @@ app.post('/admin/enable', (req, res) => {
         if (err){
             throw err;
         }
-        console.log(`${email} is enabled!`);
+        console.log(`${usersemail} is enabled!`);
     })
     
-    res.send(`${email} is enabled!`);
+    res.send(`${usersemail} is enabled!`);
 })
+
 //middleware to authenticate json web token
 function authToken(req, res, next) {
     const userauthtoken = req.cookies.useraccesstoken;
