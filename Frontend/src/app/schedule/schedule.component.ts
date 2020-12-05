@@ -29,7 +29,7 @@ export class ScheduleComponent implements OnInit {
   }
 
   createSchedule(){
-    fetch (`http://localhost:3000/timetable/schedule/${this.schedulename}`, {
+    fetch (`/timetable/schedule/${this.schedulename}`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'}
     })
@@ -53,13 +53,13 @@ export class ScheduleComponent implements OnInit {
   //display schedule for public only
   displaySchedule(){
     var count = 0;
-    fetch (`http://localhost:3000/timetable/schedule_all`)
+    fetch (`/timetable/schedule_all`)
     .then (res => {
         if (res.ok){
             res.json()
             .then (data => {
                 data.forEach(element => {
-                    fetch (`http://localhost:3000/timetable/schedule/${element.ScheduleName}`)
+                    fetch (`/timetable/schedule/${element.ScheduleName}`)
                     .then (res => {
                         res.json()
                         .then (data => {
@@ -108,7 +108,7 @@ export class ScheduleComponent implements OnInit {
       const coursecode = this.schedules[i][j].CourseCode;
 
       //fetch for data
-      fetch(`http://localhost:3000/timetable/${subjectname}/${coursecode}`) //fetch based on subject name and coursecode
+      fetch(`/timetable/${subjectname}/${coursecode}`) //fetch based on subject name and coursecode
       .then (res => res.json())
       .then (data => {
         this.courseinfo.push(data);

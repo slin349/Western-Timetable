@@ -77,7 +77,7 @@ export class PrivatescheduleComponent implements OnInit {
     //clears schedules
     this.temparray = [];
     var count = 0;
-    fetch (`http://localhost:3000/privateschedule/view`, {
+    fetch (`/privateschedule/view`, {
       method: "GET",
       credentials: "include"
     })
@@ -86,7 +86,7 @@ export class PrivatescheduleComponent implements OnInit {
             res.json()
             .then (data => {
                 data.forEach(element => {
-                    fetch (`http://localhost:3000/timetable/schedule/${element.ScheduleName}`)
+                    fetch (`/timetable/schedule/${element.ScheduleName}`)
                     .then (res => {
                         res.json()
                         .then (data => {
@@ -134,7 +134,7 @@ export class PrivatescheduleComponent implements OnInit {
       const coursecode = this.schedules[i][j].CourseCode;
 
       //fetch for data
-      fetch(`http://localhost:3000/timetable/${subjectname}/${coursecode}`) //fetch based on subject name and coursecode
+      fetch(`/timetable/${subjectname}/${coursecode}`) //fetch based on subject name and coursecode
       .then (res => res.json())
       .then (data => {
         this.courseinfo.push(data);
@@ -172,7 +172,7 @@ export class PrivatescheduleComponent implements OnInit {
 
     //if public
     if (visibility == "public"){
-      fetch(`http://localhost:3000/timetable/createschedule/${schedulename}/${author}/${description}`, {
+      fetch(`/timetable/createschedule/${schedulename}/${author}/${description}`, {
         method: "POST",
         credentials: "include"
       })
@@ -191,7 +191,7 @@ export class PrivatescheduleComponent implements OnInit {
 
     //if private
     if (visibility == "private"){
-      fetch(`http://localhost:3000/privateschedules/create/${schedulename}/${author}/${description}`, {
+      fetch(`/privateschedules/create/${schedulename}/${author}/${description}`, {
         method: "POST",
         credentials: "include"
       })
@@ -229,7 +229,7 @@ export class PrivatescheduleComponent implements OnInit {
     }
 
     //fetch for data
-    fetch(`http://localhost:3000/timetable/schedule/${schedulename}/${subject}/${coursecode}`, {
+    fetch(`/timetable/schedule/${schedulename}/${subject}/${coursecode}`, {
       method: "PUT",
       credentials: "include"
     })
@@ -265,7 +265,7 @@ export class PrivatescheduleComponent implements OnInit {
     }
     
     //fetch for data
-    fetch (`http://localhost:3000/timetable/schedule/${schedulename}`, {
+    fetch (`/timetable/schedule/${schedulename}`, {
       method: "DELETE",
       credentials: "include"
     })
@@ -308,7 +308,7 @@ export class PrivatescheduleComponent implements OnInit {
 
     //if public
     if (visibility == "public"){
-      fetch(`http://localhost:3000/privateschedule/change/public/${schedulename}`, {
+      fetch(`/privateschedule/change/public/${schedulename}`, {
         method: "POST",
         credentials: "include"
       })
@@ -327,7 +327,7 @@ export class PrivatescheduleComponent implements OnInit {
 
     //if private
     if (visibility == "private"){
-      fetch(`http://localhost:3000/privateschedule/change/private/${schedulename}`, {
+      fetch(`/privateschedule/change/private/${schedulename}`, {
         method: "POST",
         credentials: "include"
       })

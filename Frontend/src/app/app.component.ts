@@ -12,7 +12,7 @@ export class AppComponent {
   //logging out user
   logoutFunction(){
     //fetch for backend route
-    fetch('http://localhost:3000/users/logout', {
+    fetch('/users/logout', {
       method: 'POST',
       credentials: "include"
     })

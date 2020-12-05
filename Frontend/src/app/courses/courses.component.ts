@@ -25,7 +25,7 @@ export class CoursesComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void { //ngOnInit initiates the moment component loads
-    fetch("http://localhost:3000/timetable")
+    fetch("/timetable")
     .then(res => res.json())
     //this part basically achieves the GET on /timetable which gives us all our subjects with course descriptions
     .then(data => {
@@ -36,7 +36,7 @@ export class CoursesComponent implements OnInit {
 
   returnCourseCode(subject : string ){
     this.subjectname=subject;
-    fetch(`http://localhost:3000/timetable/${subject}`)
+    fetch(`/timetable/${subject}`)
     .then(res => res.json())
 
     .then (data => {
@@ -73,14 +73,14 @@ export class CoursesComponent implements OnInit {
 
     //for case they want all
     if (this.componentname == "ALL"){
-      fetch(`http://localhost:3000/timetable/${this.subjectname}/${this.coursecode}`) //fetch based on subject name and coursecode
+      fetch(`/timetable/${this.subjectname}/${this.coursecode}`) //fetch based on subject name and coursecode
       .then (res => res.json())
       .then (data => {
         this.courseinfo = data;
       })
     }
     else {
-      fetch(`http://localhost:3000/timetable/${this.subjectname}/${this.coursecode}/${this.componentname}`)
+      fetch(`/timetable/${this.subjectname}/${this.coursecode}/${this.componentname}`)
       .then(res => {
           if (res.ok) {
               res.json()
@@ -98,7 +98,7 @@ export class CoursesComponent implements OnInit {
 
   addToSchedule(){
     console.log(`${this.schedulename} ${this.subjectname2} ${this.coursecode2}`)
-    fetch (`http://localhost:3000/timetable/schedule/${this.schedulename}/${this.subjectname2}/${this.coursecode2}`,{
+    fetch (`/timetable/schedule/${this.schedulename}/${this.subjectname2}/${this.coursecode2}`,{
         method: 'PUT'
     })
     .then (res => {
@@ -133,7 +133,7 @@ export class CoursesComponent implements OnInit {
       return this.keywordMessage = ('Keyword cannot be empty');
     }
 
-    fetch (`http://localhost:3000/search/${keyword}`)
+    fetch (`/search/${keyword}`)
     .then(res => {
       if (res.ok) {
         res.json()

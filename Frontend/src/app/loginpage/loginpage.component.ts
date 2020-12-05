@@ -51,7 +51,7 @@ export class LoginpageComponent implements OnInit {
     const userdata = { email: this.regemail, username: this.regusername, password: this.regpassword};
 
     //fetch to add user to database
-    fetch('http://localhost:3000/users', {
+    fetch('/users', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export class LoginpageComponent implements OnInit {
 
     //fetch to login to database
     //credentials: include would be used to verify and send cookies
-    fetch('http://localhost:3000/users/login', {
+    fetch('/users/login', {
       method: 'POST',
       credentials: "include",
       headers: {
@@ -106,7 +106,7 @@ export class LoginpageComponent implements OnInit {
 
   reVerify(){
     const email = this.loginemail;
-    fetch (`http://localhost:3000/users/reverify/${email}`)
+    fetch (`/users/reverify/${email}`)
     .then(res => {
       return res.text();
     })
@@ -125,7 +125,7 @@ export class LoginpageComponent implements OnInit {
     }
     
     //fetch for update password
-    fetch(`http://localhost:3000/changepassword/${newPass}`, {
+    fetch(`/changepassword/${newPass}`, {
       method: 'POST',
       credentials: "include",
     })

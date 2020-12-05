@@ -28,7 +28,7 @@ export class AdminpageComponent implements OnInit {
 
   checkAdmin(){
     //fetch to see if admin
-    fetch('http://localhost:3000/admin/auth', {
+    fetch('/admin/auth', {
       method: "GET",
       credentials: "include"
     })
@@ -50,7 +50,7 @@ export class AdminpageComponent implements OnInit {
     this.users = [];
     var temparray = [];
     //fetch
-    fetch('http://localhost:3000/admin/allusers', {
+    fetch('/admin/allusers', {
       method: "GET",
       credentials: "include"
     })
@@ -80,7 +80,7 @@ export class AdminpageComponent implements OnInit {
       return this.errorMessage = "Must enter user's email"
     }
 
-    fetch(`http://localhost:3000/admin/grant/access/${useremail}`, {
+    fetch(`/admin/grant/access/${useremail}`, {
       method: "PUT",
       credentials: "include"
     })
@@ -116,7 +116,7 @@ export class AdminpageComponent implements OnInit {
 
     //fetch for enabling
     if (enabledOrdisabled == "enable"){
-      fetch(`http://localhost:3000/admin/enable/${useremail}`, {
+      fetch(`/admin/enable/${useremail}`, {
         method: "POST",
         credentials: "include"
       })
@@ -138,7 +138,7 @@ export class AdminpageComponent implements OnInit {
 
     //fetch for disabling
     if (enabledOrdisabled == "disable"){
-      fetch(`http://localhost:3000/admin/disable/${useremail}`, {
+      fetch(`/admin/disable/${useremail}`, {
         method: "POST",
         credentials: "include"
       })
