@@ -86,7 +86,7 @@ app.use((req, res, next) => {
   })
 
 //when on base page, it will display html from static folder
-app.use('/', express.static('static/western-timetable'));
+app.use('/', express.static('static/Frontend'));
 
 //middleware to do logging
 app.use((req, res, next) => { //everytime someone uses the server, it checks all routes and consoles out the request
