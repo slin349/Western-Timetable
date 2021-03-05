@@ -1,2 +1,2 @@
-# se3316-slin349-lab3
+# Western-Timetable
 Course and Schedule app utilizing ReST api made from scratch.
